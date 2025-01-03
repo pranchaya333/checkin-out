@@ -1,1 +1,131 @@
-// หน้า checkin
+// ระบุ ID ของ Google Spreadsheet และ Google Drive Folder ที่ใช้
+var SPREADSHEET_ID = '11hXJWlWcs_rBzhbos0nxs4vyNsZ6KSUInatqpWRdcgk ';
+var FOLDER_ID = '1bbSvu3om2UBN-S7tfEiQvKcFdSDnybpi '; // โฟลเดอร์สำหรับแผนที่
+var SHEET_NAME = 'DATA ';
+var LINE_NOTIFY_TOKEN = 'xjMIkKMfhdoVz48dUhWhLGyn490iIOUmEzIuRwW16mDwkHXU+blarDp5Gad2wh/zGlwrwcNEsqnWyGNRmBEnuAxkHn8XRAquXlHEoPCu1QJg5y5QbpodBGy+++X5leBLrrmQ+Xw6xMEQInhQo2QvtQdB04t89/1O/w1cDnyilFU= ';
+
+// ฟังก์ชันสำหรับส่งข้อความและรูปภาพ (ถ้ามี) ผ่าน LINE Notify
+function sendLineNotifyMessage(message, imageUrl) {
+  var url = 'https://notify-api.line.me/api/notify';
+  var headers = {
+    'Authorization': 'Bearer ' + LINE_NOTIFY_TOKEN,
+  };
+  var payload = { 'message': message };
+
+  // เพิ่มรูปภาพเข้าไปในข้อความหากมี URL รูปภาพ
+  if (imageUrl) {
+    payload['imageThumbnail'] = imageUrl;
+    payload['imageFullsize'] = imageUrl;
+  }
+
+  var options = {
+    'method': 'post',
+    'headers': headers,
+    'payload': payload,
+  };
+
+  // ส่งข้อความและรูปภาพไปยัง LINE Notify
+  UrlFetchApp.fetch(url, options);
+}
+
+// ฟังก์ชันสำหรับสร้างลิงก์ภาพ Google Maps
+function generateGoogleMapsImageLink(lat, long) {
+  var fileId = generateStaticMapImageFileId(lat, long);
+  var imageUrl = 'https://lh5.googleusercontent.com/d/' + fileId;
+  return imageUrl;
+}
+
+// ฟังก์ชันสำหรับสร้างและบันทึกภาพแผนที่แบบสแตติก
+function generateStaticMapImageFileId(lat, long) {
+  var map = Maps.newStaticMap()
+    .setSize(400, 400)
+    .setZoom(15)
+    .addMarker(lat, long)
+    .setFormat(Maps.StaticMap.Format.PNG)
+    .setLanguage('en');
+
+  var mapBlob = map.getBlob();
+  var folder = DriveApp.getFolderById(FOLDER_ID); // ระบุโฟลเดอร์สำหรับเก็บภาพแผนที่
+  var imageName = 'map_image_' + Utilities.formatDate(new Date(), 'GMT+7', 'dd-MM-yyyy_HH:mm:ss') + '.png';
+  var file = folder.createFile(mapBlob);
+  file.setName(imageName);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  
+  // ส่งกลับ ID ของไฟล์ภาพ
+  return file.getId();
+}
+
+// ฟังก์ชันสำหรับสร้างไฟล์จากข้อมูล base64 และคืนค่าลิงก์ URL ของไฟล์
+function generateFileUrl(data, folderId) {
+  var imageName = data.name + '_' + Utilities.formatDate(new Date(), 'GMT+7', 'dd-MM-yyyy_HH:mm:ss') + '.png';
+  var decodedImage = Utilities.base64Decode(data.base64);
+  var blob = Utilities.newBlob(decodedImage, 'image/png', imageName);
+  var folder = DriveApp.getFolderById(folderId); // ระบุโฟลเดอร์สำหรับเก็บภาพ
+  var file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  
+  // ส่งกลับ URL ของไฟล์ภาพ
+  return 'https://lh5.googleusercontent.com/d/' + file.getId();
+}
+
+// ฟังก์ชันสำหรับจัดการคำขอ POST
+function doPost(e) {
+  try {
+    var obj = JSON.parse(e.postData.contents);
+
+    // ตรวจสอบประเภทของคำขอและปฏิบัติการตาม
+    if (obj.action === "fetchData") {
+      var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+      var data = sheet.getDataRange().getValues();
+      return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var fileUrl = generateFileUrl(obj, FOLDER_ID); // สร้าง URL ไฟล์
+    var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      sheet = SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet(SHEET_NAME);
+      sheet.appendRow(['Timestamp', 'Image URL', 'name', 'role', 'job', 'note', 'formattedDate', 'time', 'address', 'lat', 'long', 'user', 'status', 'minutes']);
+    }
+
+    // เพิ่มข้อมูลลงใน Google Sheet
+    sheet.appendRow([
+      Utilities.formatDate(new Date(), 'GMT+7', 'dd-MM-yyyy HH:mm:ss'),
+      fileUrl,
+      obj.name,
+      obj.role,
+      obj.job,
+      obj.note,
+      Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/yyyy'), // ฟอร์แมตวันที่อย่างถูกต้อง
+      obj.time,
+      obj.address,
+      obj.lat,
+      obj.long,
+      obj.user,
+    ]);
+
+    var mapsImageLink = generateGoogleMapsImageLink(obj.lat, obj.long);
+    var formattedDate = Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/yyyy'); // ฟอร์แมตวันที่อย่างถูกต้อง
+    var basicMessage = `\n⏰ บันทึกเวลา: ${obj.job}\n👤 ชื่อ: ${obj.name}\n💼 เลขที่พนักงาน: ${obj.role}\n📝 หมายเหตุ: ${obj.note}\n📅 วันที่: ${formattedDate}\n🕒 เวลา: ${obj.time}\n🏠 ที่อยู่: ${obj.address}`;
+    
+    // ส่งข้อความแจ้งเตือนผ่าน LINE Notify พร้อมลิงก์ภาพ
+    sendLineNotifyMessage(basicMessage, mapsImageLink);
+    
+    return ContentService.createTextOutput('Success').setMimeType(ContentService.MimeType.TEXT);
+  } catch (error) {
+    console.error(error);
+    return ContentService.createTextOutput('Error: ' + error.message).setMimeType(ContentService.MimeType.TEXT);
+  }
+}
+
+// ฟังก์ชันสำหรับจัดการคำขอ GET
+function doGet(e) {
+  var data = fetchDataFromSheet();
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ฟังก์ชันสำหรับดึงข้อมูลจากชีต
+function fetchDataFromSheet() {
+  var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+  return sheet.getDataRange().getValues();
+}
