@@ -484,6 +484,12 @@ async function sendFlexMessage() {
             const lateDetails = getLateDetails(currentTimeValue, checkInTime);
             lateMessage = `คุณเข้างานสาย ${lateDetails.hours} ชั่วโมง ${lateDetails.minutes} นาที`;
         }
+    } else if (jobInput.value === 'พักเที่ยง') { // เพิ่มเงื่อนไขสำหรับ "พักเที่ยง"
+        jobColor = '#EF2F14FF'; // สีแดง
+        if (isLate(currentTimeValue, checkAfternoonTime)) {
+            const lateDetails = getLateDetails(currentTimeValue, checkAfternoonTime);
+            lateMessage = `คุณพักเที่ยงล่วงเวลา ${overtimeDetails.hours} ชั่วโมง ${overtimeDetails.minutes} นาที`;
+        }
     } else if (jobInput.value === 'ช่วงบ่าย') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
         jobColor = '#EF2F14FF'; // สีแดง
         if (isLate(currentTimeValue, checkAfternoonTime)) {
