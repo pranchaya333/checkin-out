@@ -97,7 +97,12 @@
                     <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden " />
                     <label for="radio-four"
                         class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
-                        ช่วงบ่าย
+                        พักเที่ยง
+                <div class="flex items-center space-x-2 w-full">
+                    <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden " />
+                    <label for="radio-four"
+                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
+                        เข้าบ่าย
                     </label>
                 </div>
                 <div class="flex items-center space-x-2 w-full">
@@ -477,11 +482,16 @@ async function sendFlexMessage() {
             const lateDetails = getLateDetails(currentTimeValue, checkInTime);
             lateMessage = `คุณเข้างานสาย ${lateDetails.hours} ชั่วโมง ${lateDetails.minutes} นาที`;
         }
-    } else if (jobInput.value === 'ช่วงบ่าย') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
+    } else if (jobInput.value === 'พักเที่ยง') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
         jobColor = '#EF2F14FF'; // สีแดง
         if (isLate(currentTimeValue, checkAfternoonTime)) {
             const lateDetails = getLateDetails(currentTimeValue, checkAfternoonTime);
-            lateMessage = `คุณช่วงบ่ายสาย ${lateDetails.hours} ชั่วโมง ${lateDetails.minutes} นาที`;
+        }
+    } else if (jobInput.value === 'เข้าบ่าย') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
+        jobColor = '#EF2F14FF'; // สีแดง
+        if (isLate(currentTimeValue, checkAfternoonTime)) {
+            const lateDetails = getLateDetails(currentTimeValue, checkAfternoonTime);
+            lateMessage = `คุณเข้าบ่ายสาย ${lateDetails.hours} ชั่วโมง ${lateDetails.minutes} นาที`;
         }
     } else if (jobInput.value === 'ออกงาน') { // เงื่อนไขสำหรับ "ออกงาน"
         jobColor = '#000000FF'; // สีดำ (สามารถเปลี่ยนเป็นสีอื่นได้ตามต้องการ)
@@ -672,7 +682,7 @@ async function sendFlexMessage() {
                                 weight: 'bold',
                                 size: 'sm',
                                 margin: 'md',
-                                color: (jobInput.value === 'ออกงาน') ? '#0D9608FF' : '#EF2F14FF', // สีเขียวสำหรับ "ออกงาน", สีแดงสำหรับ "ช่วงบ่าย"
+                                color: (jobInput.value === 'ออกงาน') ? '#0D9608FF' : '#EF2F14FF':'#EF2F14FF', // สีเขียวสำหรับ "ออกงาน", สีแดงสำหรับ "ช่วงบ่าย"
                                 contents: [],
                             },
                         ],
