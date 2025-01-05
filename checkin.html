@@ -474,6 +474,7 @@ async function sendFlexMessage() {
     let jobColor = '';
     let lateMessage = '';
     const checkInTime = '08:30';
+    const checkAfterTime = '13:30'
     const checkAfternoonTime = '13:30'; // เวลามาตรฐานสำหรับ "ช่วงบ่าย"
     const checkOutTime = '17:30'; // เวลามาตรฐานสำหรับ "ออกงาน"
     const currentTimeValue = currentTime.value; // สมมติว่าเป็นรูปแบบ "HH:mm"
@@ -486,8 +487,8 @@ async function sendFlexMessage() {
         }
     } else if (jobInput.value === 'พักเที่ยง') { // เพิ่มเงื่อนไขสำหรับ "พักเที่ยง"
         jobColor = '#EF2F14FF'; // สีแดง
-        if (isLate(currentTimeValue, checkAfternoonTime)) {
-            const lateDetails = getLateDetails(currentTimeValue, checkAfternoonTime);
+        if (isLate(currentTimeValue, checkAfterTime)) {
+            const lateDetails = getLateDetails(currentTimeValue, checkAfterTime);
             lateMessage = `คุณพักเที่ยงล่วงเวลา ${overtimeDetails.hours} ชั่วโมง ${overtimeDetails.minutes} นาที`;
         }
     } else if (jobInput.value === 'ช่วงบ่าย') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
