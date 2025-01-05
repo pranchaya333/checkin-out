@@ -94,22 +94,15 @@
                     </label>
                 </div>
                 <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-four" name="switch-job" value="พักเที่ยง" class="hidden " />
+                    <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden " />
                     <label for="radio-four"
-                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
-                        พักเที่ยง
-                    </label>
-                </div>
-                <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-five" name="switch-job" value="ช่วงบ่าย" class="hidden " />
-                    <label for="radio-five"
                         class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
                         ช่วงบ่าย
                     </label>
                 </div>
                 <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-six" name="switch-job" value="ออกงาน" class="hidden " />
-                    <label for="radio-six"
+                    <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden " />
+                    <label for="radio-five"
                         class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
                         ออกงาน
                     </label>
@@ -474,7 +467,6 @@ async function sendFlexMessage() {
     let jobColor = '';
     let lateMessage = '';
     const checkInTime = '08:30';
-    const checkAfterTime = '12:30'
     const checkAfternoonTime = '13:30'; // เวลามาตรฐานสำหรับ "ช่วงบ่าย"
     const checkOutTime = '17:30'; // เวลามาตรฐานสำหรับ "ออกงาน"
     const currentTimeValue = currentTime.value; // สมมติว่าเป็นรูปแบบ "HH:mm"
@@ -484,12 +476,6 @@ async function sendFlexMessage() {
         if (isLate(currentTimeValue, checkInTime)) {
             const lateDetails = getLateDetails(currentTimeValue, checkInTime);
             lateMessage = `คุณเข้างานสาย ${lateDetails.hours} ชั่วโมง ${lateDetails.minutes} นาที`;
-        }
-    } else if (jobInput.value === 'พักเที่ยง') { // เพิ่มเงื่อนไขสำหรับ "พักเที่ยง"
-        jobColor = '#EF2F14FF'; // สีแดง
-        if (isLate(currentTimeValue, checkAfterTime)) {
-            const lateDetails = getLateDetails(currentTimeValue, checkAfterTime);
-            lateMessage = `คุณพักเที่ยงล่วงเวลา ${overtimeDetails.hours} ชั่วโมง ${overtimeDetails.minutes} นาที`;
         }
     } else if (jobInput.value === 'ช่วงบ่าย') { // เพิ่มเงื่อนไขสำหรับ "ช่วงบ่าย"
         jobColor = '#EF2F14FF'; // สีแดง
