@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อมูลส่วนตัวพนักงาน</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+
+  <style>
+    #loadingOverlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.26);
+      border-radius: 15px;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-container {
+      position: relative;
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    .container {
+      /* จัดข้อความชิดซ้าย */
+      text-align: left;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      /* จัด element ในแนวตั้ง */
+      align-items: flex-start;
+      /* จัด element ชิดซ้าย */
+      max-width: 500px;
+      /* ปรับขนาด container */
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-item {
+      width: 100%;
+      /* ข้อมูลแต่ละบรรทัดเต็มความกว้าง */
+      padding: 10px;
+      margin-bottom: 10px;
+      /* ระยะห่างระหว่างบรรทัด */
+      border-radius: 5px;
+    }
+
+    .profile-item:nth-child(odd) {
+      background-color: #f2f2f2;
+      /* สีพื้นหลังบรรทัดคี่ */
+    }
+
+    .profile-item:nth-child(even) {
+      background-color: #e0e0e0;
+      /* สีพื้นหลังบรรทัดคู่ */
+    }
+
+    .profile-item h2 {
+      /* ชื่อพนักงาน */
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .profile-item p {
+      /* ข้อมูลอื่นๆ */
+      font-size: 16px;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100 h-screen">
+  <div class="container">
+    <div id="profile"></div>
+  </div>
+
+  <script>
+    // ประกาศค่า URL ที่ใช้เชื่อมต่อกับ Web App
+    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec';
+    const LIFF_ID = '2006738214-149nvm0m'; // Liff ID
+
+    // เริ่มการทำงานเมื่อโหลดหน้าเว็บ
+    window.onload = async function () {
+      await initializeLiff();
+    };
+
+    // ฟังก์ชันสำหรับเริ่มการทำงานของ LIFF
+    async function initializeLiff() {
+      try {
+        await liff.init({ liffId: `${LIFF_ID}` }); // ใช้ Liff ID ของคุณ
+        if (liff.isLoggedIn()) {
+          getUserProfile();
+        } else {
+          liff.login();
+        }
+      } catch (error) {
+        console.error('Error initializing LIFF:', error);
+      }
+    }
+
+    // ฟังก์ชันสำหรับดึงข้อมูลโปรไฟล์ผู้ใช้
+    async function getUserProfile() {
+      try {
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
+        document.getElementById('userId').value = userId;
+        document.getElementById('displayName').value = profile.displayName;
+        await fetchData(userId);
+      } catch (error) {
+        console.error('Error getting profile data:', error);
+      }
+    }
+
+    // ฟังก์ชันสำหรับดึงข้อมูลจาก Google Sheets
+    async function fetchData(userId) {
+      showLoading(true);
+      try {
+        const response = await fetch(`${WEB_MEMBER_APP_URL}`, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'fetchData', userId: userId })
+        });
+        const data = await response.json();
+        data.sort((a, b) => new Date(b[6]) - new Date(a[6]));
+        const row = data.find(row => row[1] === userId);
+        if (row) {
+          displayData(row);
+        } else {
+          console.log('No data found for userId:', userId);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
+    function displayData(row) {
+      const profileDiv = document.getElementById('profile');
+      profileDiv.innerHTML = ''; // Clear previous data
+
+      // สร้าง element สำหรับแสดงข้อมูล
+      const nameItem = document.createElement('div');
+      nameItem.classList.add('profile-item');
+      nameItem.innerHTML = `<h2>${row[2]}</h2>`; // ชื่อ
+      profileDiv.appendChild(nameItem);
+
+      const birthdayItem = document.createElement('div');
+      birthdayItem.classList.add('profile-item');
+      birthdayItem.innerHTML = `<p>วันเกิด: ${row[8]}</p><p>อายุ: ${row[9]}</p>`; // วันเกิด, อายุ
+      profileDiv.appendChild(birthdayItem);
+
+      const startDateItem = document.createElement('div');
+      startDateItem.classList.add('profile-item');
+      startDateItem.innerHTML = `<p>วันเริ่มงาน: ${row[10]}</p>`; // วันเริ่มงาน
+      profileDiv.appendChild(startDateItem);
+
+      const workAgeItem = document.createElement('div');
+      workAgeItem.classList.add('profile-item');
+      workAgeItem.innerHTML = `<p>อายุงาน: ${row[11]}</p>`; // อายุงาน
+      profileDiv.appendChild(workAgeItem);
+    }
+
+    // ฟังก์ชันสำหรับแสดง/ซ่อนการโหลดข้อมูล
+    function showLoading(isLoading) {
+      const overlay = document.getElementById('loadingOverlay');
+      const inputs = document.querySelectorAll('.input-field');
+      if (isLoading) {
+        overlay.style.display = 'flex';
+        inputs.forEach(input => input.disabled = true);
+      } else {
+        overlay.style.display = 'none';
+        inputs.forEach(input => input.disabled = false);
+      }
+    }
+  </script>
+</body>
+
+</html>
