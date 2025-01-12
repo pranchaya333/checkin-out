@@ -2,66 +2,15 @@
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้อมูลออเดอร์งานเพจ บริษัท แบรนด์ อินโนเวชั่น จำกัด</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background-color: #f5f5f5; /* สีเทาอ่อน */
-        }
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อมูลส่วนตัวพนักงาน</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
-        table {
-            width: 80%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-
-        table tbody tr:nth-child(odd) {
-            background-color: #e0e0e0; /* สีเทาอ่อนสำหรับแถวคี่ */
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #ffffff; /* สีขาวสำหรับแถวคู่ */
-        }
-
-        td:nth-child(6) { /* เลือกคอลัมน์ที่ 6 (สถานะ) */
-            color: red; 
-        }
-
-        .search-container { /* กำหนด class ให้กับ div ที่บรรจุเมนูการค้นหา */
-            width: 300px; /* กำหนดความกว้างของชุดค้นหา */
-            position: fixed; /* ให้ชุดค้นหาคงที่ */
-            top: 80px; /* ระยะห่างจากด้านบน */
-            left: 20px; /* ระยะห่างจากด้านซ้าย */
-            background-color: #f5f5f5; /* สีพื้นหลังเดียวกับ body */
-            padding: 20px; /* ระยะห่างภายใน */
-            border-radius: 10px; /* ขอบมน */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
-            z-index: 10; /* ให้ชุดค้นหาอยู่บนสุด */
-        }
-
-        /* กำหนดสีพื้นหลังให้กับปุ่มสถานะ */
-        .status-design { background-color: purple; color: white; } /* สีม่วง */
-        .status-pending { background-color: orange; color: white; } /* สีส้ม */
-        .status-confirm { background-color: blue; color: white; } /* สีน้ำเงิน */
-        .status-produce { background-color: #a52a2a; color: white; } /* สีน้ำตาล */
-        .status-cut { background-color: #8b0000; color: white; } /* สีน้ำตาลเข้ม */
-        .status-claim { background-color: #ffc000; } /* สีเหลืองเข้ม */
-        .status-deliver { background-color: green; color: white; } /* สีเขียว */
-        .status-cancel { background-color: red; color: white; } /* สีแดง */
-
-        /* เพิ่ม padding และ border-radius ให้กับปุ่ม */
-        select option { 
-            padding: 5px 10px; 
-            border-radius: 5px;
-        }
-    </style>
+  <style>
     #loadingOverlay {
       display: none;
       position: absolute;
@@ -98,73 +47,70 @@
     .container {
       /* จัดข้อความชิดซ้าย */
       text-align: left;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      /* จัด element ในแนวตั้ง */
-      align-items: flex-start;
-      /* จัด element ชิดซ้าย */
-      max-width: 500px;
-      /* ปรับขนาด container */
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .profile-item {
-      width: 100%;
-      /* ข้อมูลแต่ละบรรทัดเต็มความกว้าง */
       padding: 10px;
       margin-bottom: 10px;
-      /* ระยะห่างระหว่างบรรทัด */
       border-radius: 5px;
     }
 
     .profile-item:nth-child(odd) {
       background-color: #f2f2f2;
-      /* สีพื้นหลังบรรทัดคี่ */
+      /* สีพื้นหลัง 1 */
     }
 
     .profile-item:nth-child(even) {
       background-color: #e0e0e0;
-      /* สีพื้นหลังบรรทัดคู่ */
-    }
-
-    .profile-item h2 {
-      /* ชื่อพนักงาน */
-      font-size: 24px;
-      margin-bottom: 5px;
-    }
-
-    .profile-item p {
-      /* ข้อมูลอื่นๆ */
-      font-size: 16px;
-      margin: 0;
+      /* สีพื้นหลัง 2 */
     }
   </style>
 </head>
 
 <body class="bg-slate-100 h-screen">
-  <div class="container">
-    <div id="profile"></div>
+  <div class="max-w-md mx-auto p-4 mt-4 container">
+    <input type="hidden" id="displayName" name="displayName" value="J'ame •">
+    <div class="loading-container">
+      <div id="loadingOverlay">
+        <div class="text-center text-white">กำลังโหลดข้อมูล...</div>
+      </div>
+      <div class="flex justify-center items-center">
+        <div class="bg-slate-800 rounded-lg shadow-xl p-6">
+          <div class="flex items-center mb-4">
+            <img class="mx-auto w-24 h-24 object-cover rounded-lg mr-4" id="columnEData" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png">
+            <div>
+              <input type="text" class="input-field bg-slate-50 text-white text-md font-bold bg-opacity-0" id="columnBData" placeholder="ชื่อ"
+                name="columnBData" readonly>
+              <input type="text" class="input-field text-white text-md bg-white bg-opacity-0" id="columnCData" placeholder="รหัสพนักงาน"
+                name="columnCData" readonly>
+              <input type="text" class="input-field text-white text-md bg-white bg-opacity-0" id="columnDData" placeholder="ตำแหน่ง"
+                name="columnDData" readonly>
+            </div>
+          </div>
+
+          <input type="hidden" id="userId" name="userId">
+          <input type="hidden" id="columnAData" name="columnAData">
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-md mx-auto py-4">
+      <div id="profileData">
+        </div>
+    </div>
   </div>
 
   <script>
-    // ประกาศค่า URL ที่ใช้เชื่อมต่อกับ Web App
-    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec';
-    const LIFF_ID = '2006738214-pKWXnb5b'; // Liff ID
+    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbwW99fDFi5oxOaG2u7cyK5vI36Oop3W7B7pg-uwmlpfv8pFTgQv2tcnS2gQ0y4-lM47/exec';
+    const LIFF_ID = '2006738214-k3zGDjej'; // Liff ID
 
-    // เริ่มการทำงานเมื่อโหลดหน้าเว็บ
     window.onload = async function () {
       await initializeLiff();
     };
 
-    // ฟังก์ชันสำหรับเริ่มการทำงานของ LIFF
     async function initializeLiff() {
       try {
-        await liff.init({ liffId: `${LIFF_ID}` }); // ใช้ Liff ID ของคุณ
+        await liff.init({ liffId: `${LIFF_ID}` });
         if (liff.isLoggedIn()) {
           getUserProfile();
         } else {
@@ -175,7 +121,6 @@
       }
     }
 
-    // ฟังก์ชันสำหรับดึงข้อมูลโปรไฟล์ผู้ใช้
     async function getUserProfile() {
       try {
         const profile = await liff.getProfile();
@@ -188,7 +133,6 @@
       }
     }
 
-    // ฟังก์ชันสำหรับดึงข้อมูลจาก Google Sheets
     async function fetchData(userId) {
       showLoading(true);
       try {
@@ -211,34 +155,33 @@
       }
     }
 
-    // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
     function displayData(row) {
-      const profileDiv = document.getElementById('profile');
-      profileDiv.innerHTML = ''; // Clear previous data
+      document.getElementById('columnAData').value = row[1] || '';
+      document.getElementById('columnBData').value = row[2] || '';
+      document.getElementById('columnCData').value = row[3] || '';
+      document.getElementById('columnDData').value = row[4] || '';
+      document.getElementById('columnEData').src = row[5] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+      document.getElementById('columnGData').value = row[10] || '';
 
-      // สร้าง element สำหรับแสดงข้อมูล
-      const nameItem = document.createElement('div');
-      nameItem.classList.add('profile-item');
-      nameItem.innerHTML = `<h2>${row[2]}</h2>`; // ชื่อ
-      profileDiv.appendChild(nameItem);
-
-      const birthdayItem = document.createElement('div');
-      birthdayItem.classList.add('profile-item');
-      birthdayItem.innerHTML = `<p>วันเกิด: ${row[8]}</p><p>อายุ: ${row[9]}</p>`; // วันเกิด, อายุ
-      profileDiv.appendChild(birthdayItem);
-
-      const startDateItem = document.createElement('div');
-      startDateItem.classList.add('profile-item');
-      startDateItem.innerHTML = `<p>วันเริ่มงาน: ${row[10]}</p>`; // วันเริ่มงาน
-      profileDiv.appendChild(startDateItem);
-
-      const workAgeItem = document.createElement('div');
-      workAgeItem.classList.add('profile-item');
-      workAgeItem.innerHTML = `<p>อายุงาน: ${row[11]}</p>`; // อายุงาน
-      profileDiv.appendChild(workAgeItem);
+      // แสดงข้อมูลพนักงาน
+      const profileDataDiv = document.getElementById('profileData');
+      profileDataDiv.innerHTML = `
+        <div class="profile-item">
+          <h3>${row[2]}</h3> 
+        </div>
+        <div class="profile-item">
+          <p>วันเกิด: ${row[11]}</p> 
+          <p>อายุ: ${row[12]}</p> 
+        </div>
+        <div class="profile-item">
+          <p>วันเริ่มงาน: ${row[13]}</p> 
+        </div>
+        <div class="profile-item">
+          <p>อายุงาน: ${row[14]}</p> 
+        </div>
+      `;
     }
 
-    // ฟังก์ชันสำหรับแสดง/ซ่อนการโหลดข้อมูล
     function showLoading(isLoading) {
       const overlay = document.getElementById('loadingOverlay');
       const inputs = document.querySelectorAll('.input-field');
