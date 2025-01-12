@@ -1,213 +1,194 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ข้อมูลส่วนตัว</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลส่วนตัว</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
-  <style>
-    /* ซ่อน overlay สำหรับโหลด */
-    #loadingOverlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.26);
-      border-radius: 15px;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
+    <style>
+        /* ซ่อน overlay สำหรับโหลด */
+        #loadingOverlay {  
+            display: none; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0, 0, 0, 0.26); 
+            border-radius:15px; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+        }
 
-    /* การตั้งค่าภาชนะที่ใช้แสดง overlay โหลด */
-    .loading-container {
-      position: relative;
-    }
+        /* การตั้งค่าภาชนะที่ใช้แสดง overlay โหลด */
+        .loading-container { 
+            position: relative;  
+        }
 
-    /* การตั้งค่าภาพกระพริบ */
-    @keyframes blink {
-      0%,
-      100% {
-        opacity: 1;
-      }
+        /* การตั้งค่าภาพกระพริบ */
+        @keyframes blink {  
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.5; } 
+        }
 
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    /* การตั้งค่าภาพกระพริบ */
-    .blink {
-      animation: blink 1s infinite;
-    }
-  </style>
+        /* การตั้งค่าภาพกระพริบ */
+        .blink { 
+            animation: blink 1s infinite; 
+        }
+    </style>
 </head>
-
-<body class="bg-yellow-100 h-screen">
-  <div class="max-w-md mx-auto p-4 mt-4">
-    <input type="hidden" id="displayName" name="displayName" value="J'ame  •">
-    <div class="loading-container">
-      <div id="loadingOverlay">
-        <div class="text-center text-white">ค้นหารายชื่อ..</div>
-      </div>
-      <div class="flex justify-center items-center">
-        <div class="bg-slate-800 rounded-lg shadow-xl p-6">
-          <div class="flex items-center mb-4">
-            <img class="mx-auto w-24 h-24 object-cover rounded-lg mr-4" id="columnEData"
-              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png">
-            <div>
-              <input type="text" class="input-field bg-slate-50 text-white text-md font-bold bg-opacity-0 "
-                id="columnBData" placeholder="ชื่อ" name="columnBData" readonly>
-              <input type="text" class="input-field text-white text-md bg-white bg-opacity-0 " id="columnCData"
-                placeholder="รหัสพนักงาน" name="columnCData" readonly>
-              <input type="text" class="input-field text-white text-md bg-white bg-opacity-0 " id="columnDData"
-                placeholder="ตำแหน่ง" name="columnDData" readonly>
+<body class="bg-slate-100 h-screen">
+    <div class="max-w-md mx-auto p-4 mt-4">
+        <input type="hidden" id="displayName" name="displayName" value="J'ame  •">
+        <div class="loading-container">
+            <div id="loadingOverlay">
+                <div class="text-center text-white">ค้นหารายชื่อ..</div>
             </div>
-          </div>
+            <div class="flex justify-center items-center">
+                <div class="bg-slate-800 rounded-lg shadow-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img class="mx-auto w-24 h-24 object-cover rounded-lg mr-4" id="columnEData"
+                             src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png">
+                        <div>
+                            <input type="text"
+                                   class="input-field bg-slate-50 text-white text-md font-bold bg-opacity-0 "
+                                   id="columnBData" placeholder="ชื่อ" name="columnBData" readonly>
+                            <input type="text" class="input-field text-white text-md bg-white bg-opacity-0 "
+                                   id="columnCData" placeholder="รหัสพนักงาน" name="columnCData" readonly>
+                            <input type="text" class="input-field text-white text-md bg-white bg-opacity-0 "
+                                   id="columnDData" placeholder="ตำแหน่ง" name="columnDData" readonly>
+                        </div>
+                    </div>
 
-          <div class="pt-4 border rounded-lg">
-            <div class="flex justify-between">
-              <div class="w-full">
-                <h1 class="font-light text-white text-center text-sm">ข้อมูลพนักงาน</h1>
-                <div class="profile-item">
-                  <p class="text-lg">วันเกิด: <span id="birthdate" class="text-black"></span></p>
-                  <p class="text-lg">อายุ: <span id="age" class="text-black"></span></p>
+                    <div class="pt-4 border rounded-lg">
+                        <div class="flex justify-between">
+                            <div class="w-full">
+                                <h1 class="font-light text-white text-center text-sm">ข้อมูลพนักงาน</h1>
+                                <div class="profile-item"> 
+                                  <p>สวัสดี</p> 
+                                </div> 
+                                <div class="profile-item"> 
+                                  <p>วันเกิด: <span id="birthdate"></span></p> 
+                                  <p>อายุ: <span id="age"></span></p> 
+                                </div> 
+                                <div class="profile-item"> 
+                                  <p>วันเริ่มงาน: <span id="startDate"></span></p> 
+                                </div> 
+                                <div class="profile-item"> 
+                                  <p>อายุงาน: <span id="workAge"></span></p> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="userId" name="userId">
+                    <input type="hidden" id="columnAData" name="columnAData">
                 </div>
-                <div class="profile-item">
-                  <p class="text-lg">วันเริ่มงาน: <span id="startDate" class="text-black"></span></p>
-                </div>
-                <div class="profile-item">
-                  <p class="text-lg">อายุงาน: <span id="workAge" class="text-black"></span></p>
-                </div>
-                <div class="profile-item">
-                  <p class="text-lg">ลาพักร้อน: <span id="leaveVacation" class="text-black"></span></p>
-                </div>
-                <div class="profile-item">
-                  <p class="text-lg">ลาป่วย: <span id="leaveSick" class="text-black"></span></p>
-                </div>
-                <div class="profile-item">
-                  <p class="text-lg">ลากิจ: <span id="leaveBusiness" class="text-black"></span></p>
-                </div>
-              </div>
             </div>
-          </div>
-          <input type="hidden" id="userId" name="userId">
-          <input type="hidden" id="columnAData" name="columnAData">
         </div>
-      </div>
+        <div class="max-w-md mx-auto py-4">
+          <button type="button" id="closeBtn"
+                  class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-slate-600">ปิดหน้าต่างนี้</button>
+        </div>
     </div>
-    <div class="max-w-md mx-auto py-4">
-      <button type="button" id="closeBtn"
-        class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-slate-600">ปิดหน้าต่างนี้</button>
-    </div>
-  </div>
-  <script>
-    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec';
-    const LIFF_ID = '2006738214-DB5NOnYn'; // Liff ID
+    <script>
+        // ประกาศค่า URL ที่ใช้เชื่อมต่อกับ Web App
+        const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec'; 
+        const LIFF_ID = '2006738214-DB5NOnYn'; // Liff ID
 
-    window.onload = async function () {
-      await initializeLiff();
-    };
+        // เริ่มการทำงานเมื่อโหลดหน้าเว็บ
+        window.onload = async function () {
+            await initializeLiff();
+        };
 
-    async function initializeLiff() {
-      try {
-        await liff.init({ liffId: `${LIFF_ID}` });
-        if (liff.isLoggedIn()) {
-          getUserProfile();
-        } else {
-          liff.login();
+        // ฟังก์ชันสำหรับเริ่มการทำงานของ LIFF
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: `${LIFF_ID}` }); // ใช้ Liff ID ของคุณ
+                if (liff.isLoggedIn()) {
+                    getUserProfile();
+                } else {
+                    liff.login();
+                }
+            } catch (error) {
+                console.error('Error initializing LIFF:', error);
+            }
         }
-      } catch (error) {
-        console.error('Error initializing LIFF:', error);
-      }
-    }
 
-    async function getUserProfile() {
-      try {
-        const profile = await liff.getProfile();
-        const userId = profile.userId;
-        document.getElementById('userId').value = userId;
-        document.getElementById('displayName').value = profile.displayName;
-        await fetchData(userId);
-      } catch (error) {
-        console.error('Error getting profile data:', error);
-      }
-    }
-
-    async function fetchData(userId) {
-      showLoading(true);
-      try {
-        const response = await fetch(`${WEB_MEMBER_APP_URL}`, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'fetchData', userId: userId })
-        });
-        const data = await response.json();
-
-        // ไม่ต้อง sort หรือ find เนื่องจาก Apps Script ส่งข้อมูลพนักงานมาให้แล้ว
-        // data.sort((a, b) => new Date(b[6]) - new Date(a[6]));
-        // const row = data.find(row => row[1] === userId);
-
-        if (data) {
-          displayData(data); // ใช้ data ที่ได้จาก response โดยตรง
-        } else {
-          console.log('No data found for userId:', userId);
+        // ฟังก์ชันสำหรับดึงข้อมูลโปรไฟล์ผู้ใช้
+        async function getUserProfile() {
+            try {
+                const profile = await liff.getProfile();
+                const userId = profile.userId;
+                document.getElementById('userId').value = userId;
+                document.getElementById('displayName').value = profile.displayName;
+                await fetchData(userId);
+            } catch (error) {
+                console.error('Error getting profile data:', error);
+            }
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        showLoading(false);
-      }
-    }
 
-    function displayData(row) {
-      document.getElementById('columnAData').value = row[1] || '';
-      document.getElementById('columnBData').value = row[2] || '';
-      document.getElementById('columnCData').value = row[3] || '';
-      document.getElementById('columnDData').value = row[4] || '';
-      document.getElementById('columnEData').src = row[5] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
-      //document.getElementById('columnGData').value = row[10] || '';
+        // ฟังก์ชันสำหรับดึงข้อมูลจาก Google Sheets
+        async function fetchData(userId) {
+            showLoading(true);
+            try {
+                const response = await fetch(`${WEB_MEMBER_APP_URL}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'fetchData', userId: userId })
+                });
+                const data = await response.json();
+                data.sort((a, b) => new Date(b[6]) - new Date(a[6]));
+                const row = data.find(row => row[1] === userId);
+                if (row) {
+                    displayData(row);
+                } else {
+                    console.log('No data found for userId:', userId);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
 
-      // แปลงรูปแบบวันที่
-      const birthdate = new Date(row[11]); // สมมติว่าวันเกิดอยู่ใน row[11]
-      const formattedBirthdate = `${birthdate.getDate()}/${birthdate.getMonth() + 1}/${birthdate.getFullYear()}`;
+        // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
+        function displayData(row) {
+            document.getElementById('columnAData').value = row[1] || '';
+            document.getElementById('columnBData').value = row[2] || '';
+            document.getElementById('columnCData').value = row[3] || '';
+            document.getElementById('columnDData').value = row[4] || '';
+            document.getElementById('columnEData').src = row[5] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+            document.getElementById('birthdate').textContent = row[11] || '';
+            document.getElementById('age').textContent = row[12] || '';
+            document.getElementById('startDate').textContent = row[13] || '';
+            document.getElementById('workAge').textContent = row[14] || '';
+        }
 
-      // แสดงข้อมูลพนักงาน
-      document.getElementById('birthdate').textContent = formattedBirthdate;
-      document.getElementById('age').textContent = row[12] || '';
-      document.getElementById('startDate').textContent = row[13] || '';
-      document.getElementById('workAge').textContent = row[14] || '';
-      document.getElementById('leaveVacation').textContent = row[7] || '0';
-      document.getElementById('leaveSick').textContent = row[8] || '0';
-      document.getElementById('leaveBusiness').textContent = row[9] || '0';
-    }
+        // ฟังก์ชันสำหรับแสดง/ซ่อนการโหลดข้อมูล
+        function showLoading(isLoading) {
+            const overlay = document.getElementById('loadingOverlay');
+            const inputs = document.querySelectorAll('.input-field');
+            if (isLoading) {
+                overlay.style.display = 'flex';
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                overlay.style.display = 'none';
+                inputs.forEach(input => input.disabled = false);
+            }
+        }
 
-    function showLoading(isLoading) {
-      const overlay = document.getElementById('loadingOverlay');
-      const inputs = document.querySelectorAll('.input-field');
-      if (isLoading) {
-        overlay.style.display = 'flex';
-        inputs.forEach(input => input.disabled = true);
-      } else {
-        overlay.style.display = 'none';
-        inputs.forEach(input => input.disabled = false);
-      }
-    }
+        // ฟังก์ชันสำหรับปิดหน้าต่าง LIFF
+        function closeWindow() {
+          liff.closeWindow();
+        }
 
-    // ฟังก์ชันสำหรับปิดหน้าต่าง LIFF
-    function closeWindow() {
-      liff.closeWindow();
-    }
-
-    // เพิ่ม Event Listener ให้กับปุ่ม "closeBtn"
-    document.getElementById('closeBtn').addEventListener('click', closeWindow);
-  </script>
+        // เพิ่ม Event Listener ให้กับปุ่ม "closeBtn"
+        document.getElementById('closeBtn').addEventListener('click', closeWindow);
+    </script>
 </body>
-
 </html>
