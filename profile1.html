@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
   <meta charset="UTF-8">
@@ -77,17 +77,23 @@
               <div class="w-full">
                 <h1 class="font-light text-white text-center text-sm">ข้อมูลพนักงาน</h1>
                 <div class="profile-item">
-                  <p class="text-2xl text-yellow-600">สวัสดี</p>
+                  <p class="text-lg">วันเกิด: <span id="birthdate" class="text-black"></span></p>
+                  <p class="text-lg">อายุ: <span id="age" class="text-black"></span></p>
                 </div>
                 <div class="profile-item">
-                  <p class="text-lg">วันเกิด: <span id="birthdate" class="text-white font-bold text-xl"></span></p>
-                  <p class="text-lg">อายุ: <span id="age" class="text-white font-bold text-xl"></span></p>
+                  <p class="text-lg">วันเริ่มงาน: <span id="startDate" class="text-black"></span></p>
                 </div>
                 <div class="profile-item">
-                  <p class="text-lg">วันเริ่มงาน: <span id="startDate" class="text-white font-bold text-xl"></span></p>
+                  <p class="text-lg">อายุงาน: <span id="workAge" class="text-black"></span></p>
                 </div>
                 <div class="profile-item">
-                  <p class="text-lg">อายุงาน: <span id="workAge" class="text-white font-bold text-xl"></span></p>
+                  <p class="text-lg">ลาพักร้อน: <span id="leaveVacation" class="text-black"></span></p>
+                </div>
+                <div class="profile-item">
+                  <p class="text-lg">ลาป่วย: <span id="leaveSick" class="text-black"></span></p>
+                </div>
+                <div class="profile-item">
+                  <p class="text-lg">ลากิจ: <span id="leaveBusiness" class="text-black"></span></p>
                 </div>
               </div>
             </div>
@@ -103,8 +109,8 @@
     </div>
   </div>
   <script>
-    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbwW99fDFi5oxOaG2u7cyK5vI36Oop3W7B7pg-uwmlpfv8pFTgQv2tcnS2gQ0y4-lM47/exec';
-    const LIFF_ID = '2006738214-pKWXnb5b'; // Liff ID
+    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec';
+    const LIFF_ID = '2006738214-DB5NOnYn'; // Liff ID
 
     window.onload = async function () {
       await initializeLiff();
@@ -144,7 +150,7 @@
         });
         const data = await response.json();
 
-        // **ไม่ต้อง sort หรือ find** เนื่องจาก Apps Script ส่งข้อมูลพนักงานมาให้แล้ว
+        // ไม่ต้อง sort หรือ find เนื่องจาก Apps Script ส่งข้อมูลพนักงานมาให้แล้ว
         // data.sort((a, b) => new Date(b[6]) - new Date(a[6]));
         // const row = data.find(row => row[1] === userId);
 
@@ -177,6 +183,9 @@
       document.getElementById('age').textContent = row[12] || '';
       document.getElementById('startDate').textContent = row[13] || '';
       document.getElementById('workAge').textContent = row[14] || '';
+      document.getElementById('leaveVacation').textContent = row[7] || '0';
+      document.getElementById('leaveSick').textContent = row[8] || '0';
+      document.getElementById('leaveBusiness').textContent = row[9] || '0';
     }
 
     function showLoading(isLoading) {
