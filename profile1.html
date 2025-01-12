@@ -98,10 +98,14 @@
       <div id="profileData">
         </div>
     </div>
+
+    <div class="mt-4">
+      <button type="button" id="closeBtn" class="bg-red-500 text-center w-full text-white py-2 px-4 rounded-lg hover:bg-red-600">ปิดหน้าต่างนี้</button>
+    </div>
   </div>
 
   <script>
-    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycby4ToaeyXMyeyWO50ETEghugXczRwVHYcH54MZCDJPGozz54kCgvb0Pc39AP2jf5flBHg/exec';
+    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbwW99fDFi5oxOaG2u7cyK5vI36Oop3W7B7pg-uwmlpfv8pFTgQv2tcnS2gQ0y4-lM47/exec';
     const LIFF_ID = '2006738214-pKWXnb5b'; // Liff ID
 
     window.onload = async function () {
@@ -166,20 +170,20 @@
       // แสดงข้อมูลพนักงาน
       const profileDataDiv = document.getElementById('profileData');
       profileDataDiv.innerHTML = `
-        <div class="profile-item">
-          <h3>${row[2]}</h3> 
-        </div>
-        <div class="profile-item">
-          <p>วันเกิด: ${row[11]}</p> 
-          <p>อายุ: ${row[12]}</p> 
-        </div>
-        <div class="profile-item">
-          <p>วันเริ่มงาน: ${row[13]}</p> 
-        </div>
-        <div class="profile-item">
-          <p>อายุงาน: ${row[14]}</p> 
-        </div>
-      `;
+              <div class="profile-item">
+                <h3>${row[2]}</h3> 
+              </div>
+              <div class="profile-item">
+                <p>วันเกิด: ${row[11]}</p> 
+                <p>อายุ: ${row[12]}</p> 
+              </div>
+              <div class="profile-item">
+                <p>วันเริ่มงาน: ${row[13]}</p> 
+              </div>
+              <div class="profile-item">
+                <p>อายุงาน: ${row[14]}</p> 
+              </div>
+            `;
     }
 
     function showLoading(isLoading) {
@@ -193,6 +197,14 @@
         inputs.forEach(input => input.disabled = false);
       }
     }
+
+    // ฟังก์ชันสำหรับปิดหน้าต่าง LIFF
+    function closeWindow() {
+      liff.closeWindow();
+    }
+
+    // เพิ่ม Event Listener ให้กับปุ่ม "closeBtn"
+    document.getElementById('closeBtn').addEventListener('click', closeWindow);
   </script>
 </body>
 
