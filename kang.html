@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>งานค้างของฉัน</title>
+  <title>ข้อมูลส่วนตัว</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -52,7 +52,7 @@
 
 <body class="bg-slate-100 h-screen">
   <div class="max-w-md mx-auto p-4 mt-4">
-    <input type="hidden" id="displayName" name="displayName" value="J'ame •">
+    <input type="hidden" id="displayName" name="displayName" value="J'ame  •">
     <div class="loading-container">
       <div id="loadingOverlay">
         <div class="text-center text-white">ค้นหารายชื่อ..</div>
@@ -98,8 +98,8 @@
 
   <script>
     // ประกาศค่า URL ที่ใช้เชื่อมต่อกับ Web App
-    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbywer1odEu4WzTny-JsG08XDWJ-6NbEpXSPBcbjWOjg-_yc3k18UTwrrbXvhwhdO4wA/exec'; 
-    const LIFF_ID = '2006738214-Gkw67pqp'; // Liff ID
+    const WEB_MEMBER_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec';
+    const LIFF_ID = '2006738214-pKWXnb5b'; // Liff ID
 
     // เริ่มการทำงานเมื่อโหลดหน้าเว็บ
     window.onload = async function () {
@@ -142,7 +142,7 @@
           body: JSON.stringify({action: 'fetchData', userId: userId})
         });
         const data = await response.json();
-        const row = data.find(row => row[2] === userId); // ใช้รหัสพนักงาน (index 2)
+        const row = data.find(row => row[1] === userId);
         if (row) {
           displayData(row);
         } else {
@@ -157,12 +157,11 @@
 
     // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
     function displayData(row) {
-      document.getElementById('columnAData').value = row[0] || '';
-      document.getElementById('columnBData').value = row[1] || '';
-      document.getElementById('columnCData').value = row[2] || '';
-      document.getElementById('columnDData').value = row[3] || '';
-      document.getElementById('columnEData').src = row[4] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
-      document.getElementById('birthdate').textContent = row[10] ? new Date(row[10]).toLocaleDateString('th-TH') : '';
+      document.getElementById('columnAData').value = row[1] || '';
+      document.getElementById('columnBData').value = row[2] || '';
+      document.getElementById('columnCData').value = row[3] || '';
+      document.getElementById('columnDData').value = row[4] || '';
+      document.getElementById('columnEData').src = row[5] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
       document.getElementById('pendingTasks').textContent = row[15] || '0';
       document.getElementById('taskDetails').textContent = row[16] || '0';
     }
@@ -189,4 +188,5 @@
     document.getElementById('closeBtn').addEventListener('click', closeWindow);
   </script>
 </body>
+
 </html>
