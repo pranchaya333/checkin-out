@@ -148,7 +148,7 @@
           body: JSON.stringify({ action: 'fetchData', userId: userId })
         });
         const data = await response.json();
-        //data.sort((a, b) => new Date(b[6]) - new Date(a[6])); // ไม่จำเป็นต้อง sort แล้ว
+        // data.sort((a, b) => new Date(b[6]) - new Date(a[6])); // ไม่จำเป็นต้อง sort แล้ว
         const row = data.find(row => row[1] === userId);
         if (row) {
           displayData(row);
@@ -164,11 +164,11 @@
 
     // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
     function displayData(row) {
-      document.getElementById('columnAData').value = row[1] || '';
-      document.getElementById('columnBData').value = row[2] || '';
-      document.getElementById('columnCData').value = row[3] || '';
-      document.getElementById('columnDData').value = row[4] || '';
-      document.getElementById('columnEData').src = row[5] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+      document.getElementById('columnAData').value = row[0] || ''; // แก้ไข index เป็น 0
+      document.getElementById('columnBData').value = row[1] || ''; // แก้ไข index เป็น 1
+      document.getElementById('columnCData').value = row[2] || ''; // แก้ไข index เป็น 2
+      document.getElementById('columnDData').value = row[3] || ''; // แก้ไข index เป็น 3
+      document.getElementById('columnEData').src = row[4] || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'; // แก้ไข index เป็น 4
 
       // แสดงจำนวนงานค้าง
       document.getElementById('pendingTasks').textContent = row[15] || '0'; 
