@@ -131,6 +131,7 @@
       try {
         const profile = await liff.getProfile();
         const userId = profile.userId;
+        console.log("LIFF userId:", userId); // เพิ่ม console.log เพื่อตรวจสอบ userId
         document.getElementById('userId').value = userId;
         document.getElementById('displayName').value = profile.displayName;
         await fetchData(userId);
@@ -148,8 +149,9 @@
           body: JSON.stringify({ action: 'fetchData', userId: userId })
         });
         const data = await response.json();
-        // data.sort((a, b) => new Date(b[6]) - new Date(a[6])); // ไม่จำเป็นต้อง sort แล้ว
+        console.log("Fetched data:", data); // เพิ่ม console.log เพื่อตรวจสอบข้อมูลที่ดึงมา
         const row = data.find(row => row[0] === userId); // แก้ไข index เป็น 0
+        console.log("Matching row:", row); // เพิ่ม console.log เพื่อตรวจสอบแถวที่ตรงกัน
         if (row) {
           displayData(row);
         } else {
@@ -164,6 +166,7 @@
 
     // ฟังก์ชันสำหรับแสดงข้อมูลบนหน้าเว็บ
     function displayData(row) {
+      console.log("Data to display:", row); // เพิ่ม console.log เพื่อตรวจสอบข้อมูลที่จะแสดง
       document.getElementById('columnAData').value = row[0] || ''; 
       document.getElementById('columnBData').value = row[1] || ''; 
       document.getElementById('columnCData').value = row[2] || ''; 
