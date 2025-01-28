@@ -47,7 +47,7 @@
         <!-- ส่วนนี้แสดงข้อความต้อนรับและชื่อผู้ใช้ -->
         <div class="p-2">
             <span>🏆 Bonus Point ของคุณ </span>
-            <input type="text" id="displayName" name="displayName">
+            <input type="text" id="columnQData" name="displayName">
         </div>
         <!-- กล่องแสดงวันที่และเวลา -->
         <div class="bg-green-200 border rounded-lg text-slate-800 text-center my-4 py-8 px-4">
@@ -257,6 +257,7 @@
         document.getElementById('columnDData').value = row[4] || '';
         document.getElementById('columnEData').value = row[5] || '';
         document.getElementById('columnFData').value = row[6] || '';
+        document.getElementById('columnQData').value = row[17] || '';
     }
 
     // ฟังก์ชันนี้ใช้ในการแสดงหรือซ่อนหน้าต่างโหลด
