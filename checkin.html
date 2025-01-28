@@ -257,6 +257,7 @@
         document.getElementById('columnDData').value = row[4] || '';
         document.getElementById('columnEData').value = row[5] || '';
         document.getElementById('columnFData').value = row[6] || '';
+        document.getElementById('columnQData').value = row[17] || '';
     }
 
     // ฟังก์ชันนี้ใช้ในการแสดงหรือซ่อนหน้าต่างโหลด
@@ -581,6 +582,27 @@ async function sendFlexMessage() {
                                     },
                                 ],
                             },
+                                                        {
+                                type: 'box',
+                                layout: 'baseline',
+                                contents: [
+                                    {
+                                        type: 'text',
+                                        text: 'รหัสพนักงาน',
+                                        weight: 'bold',
+                                        size: 'sm',
+                                        flex: 0,
+                                        margin: 'sm',
+                                        contents: [],
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: `${columnQData.value}`,
+                                        size: 'sm',
+                                        color: '#000000FF',
+                                        align: 'end',
+                                        contents: [],
+                                    },
                         ],
                     },
                     {
