@@ -49,7 +49,7 @@
     </div>
 
     <script>
-        const LIFF_ID = '2007080925-ElPeyOda';
+        const LIFF_ID = '2007080925-ElPeyOda'; // เปลี่ยนเป็น LIFF ID ของคุณ
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznMSL7xZALurNHRF_CRJC1tj9ITponXX2dk32Jx8W32MbYZaY_ETjsmYqqnluDGV8Cog/exec';
 
         // เริ่มต้น LIFF
@@ -86,8 +86,13 @@
                     })
                 });
                 
-                if (!response.ok) throw new Error('Network Error');
-                return await response.text();
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server Error: ${errorText}`);
+                }
+
+                const result = await response.text();
+                return result;
             } catch (error) {
                 console.error('Submission Error:', error);
                 throw error;
@@ -260,12 +265,15 @@
                             liff.closeWindow();
                         }
                     });
+                } else {
+                    throw new Error(result);
                 }
             } catch (error) {
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด!',
-                    text: error.message
+                    text: error.message || 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่ภายหลัง'
                 });
             }
         });
