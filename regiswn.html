@@ -11,28 +11,36 @@
 </head>
 <body class="bg-slate-100 min-h-screen">
 <div class="max-w-md m-auto p-2">
-        <form>
-            <div class="bg-white rounded-lg p-10">    
-                <div class="flex flex-col">
-                    <!-- ฟิลด์ Line ID ที่ซ่อนไว้ -->
-                    <input type="hidden" id="userlineId" name="userlineId">
-                    <div class="mb-4">
-                        <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="nameId" placeholder="ชื่อ-สกุล" name="nameId" required>
-                    </div>
-                    <div class="mb-4">
-                        <input type="tel" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="phoneId" placeholder="เบอร์โทรศัพท์" name="phoneId" required>
-                    </div>
-                    <div class="mb-6">
-                        <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="charityId" placeholder="เลขบัตรการกุศล" name="charityId" required>
-                    </div>
+    <!-- ส่วนหัว: ข้อความพร้อมกรอบข้อความ -->
+    <div class="bg-white rounded-lg p-6 mb-4 text-center border-2 border-blue-500 shadow-lg">
+        <h1 class="text-3xl font-bold text-blue-700 mb-2">ลงทะเบียนชิงโชค</h1>
+        <h2 class="text-xl text-gray-700">บัตรการกุศล</h2>
+        <h3 class="text-lg text-gray-600">วัดพุทธบูชา ป่าโคกปราสาท</h3>
+    </div>
+
+    <!-- ฟอร์มลงทะเบียน -->
+    <form>
+        <div class="bg-white rounded-lg p-10">    
+            <div class="flex flex-col">
+                <!-- ฟิลด์ Line ID ที่ซ่อนไว้ -->
+                <input type="hidden" id="userlineId" name="userlineId">
+                <div class="mb-4">
+                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="nameId" placeholder="ชื่อ-สกุล" name="nameId" required>
                 </div>
-                <button type="button" id="submitBtn" class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-blue-700">บันทึกข้อมูล</button>
+                <div class="mb-4">
+                    <input type="tel" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="phoneId" placeholder="เบอร์โทรศัพท์" name="phoneId" required>
+                </div>
+                <div class="mb-6">
+                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="charityId" placeholder="เลขบัตรการกุศล" name="charityId" required>
+                </div>
             </div>
-        </form>
+            <button type="button" id="submitBtn" class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-blue-700">บันทึกข้อมูล</button>
+        </div>
+    </form>
 </div>
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxDpxZqliJAcwF5YXZeApOdoWj1OXtDFa54iMAECKaNQf1mXwPRE_yhi8G1Rj-nxLV2VA/exec'; 
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbznMSL7xZALurNHRF_CRJC1tj9ITponXX2dk32Jx8W32MbYZaY_ETjsmYqqnluDGV8Cog/exec'; 
     const LIFF_ID = '2007080925-ElPeyOda';
 
     window.onload = function () {
@@ -166,7 +174,7 @@
                     contents: [
                         {
                             type: 'text',
-                            text: 'ยินดีต้อนรับขอให้คุณโชคดี!',
+                            text: 'ยินดีต้อนรับ!',
                             size: 'sm',
                             color: '#aaaaaa',
                             align: 'center'
