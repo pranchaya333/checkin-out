@@ -49,13 +49,17 @@
     </div>
 
     <script>
-        const LIFF_ID = '2007080925-ElPeyOda'; // เปลี่ยนเป็น LIFF ID ของคุณ
+        const LIFF_ID = '2007080925-ElPeyOda';
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznMSL7xZALurNHRF_CRJC1tj9ITponXX2dk32Jx8W32MbYZaY_ETjsmYqqnluDGV8Cog/exec';
 
         // เริ่มต้น LIFF
         async function initializeLiff() {
             try {
-                await liff.init({ liffId: LIFF_ID });
+                await liff.init({ 
+                    liffId: LIFF_ID,
+                    withLoginOnExternalBrowser: true
+                });
+                
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
@@ -73,6 +77,9 @@
             try {
                 const response = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         action: "insertData",
                         ...data
@@ -84,6 +91,140 @@
             } catch (error) {
                 console.error('Submission Error:', error);
                 throw error;
+            }
+        }
+
+        // ฟังก์ชันส่ง Flex Message
+        async function sendFlexMessage() {
+            try {
+                const flexMessage = {
+                    type: 'flex',
+                    altText: 'ลงทะเบียนเรียบร้อย',
+                    contents: {
+                        type: 'bubble',
+                        styles: {
+                            header: { backgroundColor: '#f0f0f0' },
+                            footer: { backgroundColor: '#f0f0f0' },
+                            body: { backgroundColor: '#ffffff' }
+                        },
+                        header: {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'ข้อมูลลงทะเบียนสำเร็จ',
+                                    weight: 'bold',
+                                    size: 'lg',
+                                    color: '#000000',
+                                    align: 'center'
+                                }
+                            ]
+                        },
+                        body: {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                                {
+                                    type: 'box',
+                                    layout: 'vertical',
+                                    margin: 'lg',
+                                    spacing: 'sm',
+                                    contents: [
+                                        {
+                                            type: 'box',
+                                            layout: 'horizontal',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: 'ชื่อ-สกุล',
+                                                    size: 'sm',
+                                                    color: '#555555',
+                                                    flex: 1
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: document.getElementById('nameId').value,
+                                                    size: 'sm',
+                                                    color: '#111111',
+                                                    align: 'end',
+                                                    flex: 2
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            type: 'box',
+                                            layout: 'horizontal',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: 'เบอร์โทรศัพท์',
+                                                    size: 'sm',
+                                                    color: '#555555',
+                                                    flex: 1
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: document.getElementById('phoneId').value,
+                                                    size: 'sm',
+                                                    color: '#111111',
+                                                    align: 'end',
+                                                    flex: 2
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            type: 'box',
+                                            layout: 'horizontal',
+                                            contents: [
+                                                {
+                                                    type: 'text',
+                                                    text: 'เลขบัตรการกุศล',
+                                                    size: 'sm',
+                                                    color: '#555555',
+                                                    flex: 1
+                                                },
+                                                {
+                                                    type: 'text',
+                                                    text: document.getElementById('charityId').value,
+                                                    size: 'sm',
+                                                    color: '#111111',
+                                                    align: 'end',
+                                                    flex: 2
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        footer: {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'ยินดีต้อนรับ!',
+                                    size: 'sm',
+                                    color: '#aaaaaa',
+                                    align: 'center'
+                                }
+                            ]
+                        }
+                    }
+                };
+
+                if (liff.isInClient() && liff.isApiAvailable('sendMessages')) {
+                    await liff.sendMessages([flexMessage]);
+                    return true;
+                } else {
+                    console.log('ไม่สามารถส่งข้อความในสภาพแวดล้อมนี้');
+                    return false;
+                }
+            } catch (error) {
+                console.error('ส่ง Flex Message ไม่สำเร็จ:', error);
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อความยืนยันได้', 'error');
+                return false;
             }
         }
 
@@ -107,14 +248,18 @@
             try {
                 const result = await submitForm(formData);
                 if (result === "success") {
+                    const messageSent = await sendFlexMessage();
+                    
                     Swal.fire({
-                        icon: 'success',
-                        title: 'บันทึกข้อมูลสำเร็จ!',
-                        text: 'ขอบคุณที่ร่วมลงทะเบียน',
+                        icon: messageSent ? 'success' : 'info',
+                        title: messageSent ? 'บันทึกข้อมูลสำเร็จ!' : 'บันทึกข้อมูลสำเร็จ',
+                        text: messageSent ? 'ขอบคุณที่ร่วมลงทะเบียน' : 'แต่ไม่สามารถส่งข้อความยืนยันได้',
                         confirmButtonText: 'ปิด'
-                    }).then(() => liff.closeWindow());
-                } else {
-                    throw new Error(result);
+                    }).then(() => {
+                        if (liff.isInClient()) {
+                            liff.closeWindow();
+                        }
+                    });
                 }
             } catch (error) {
                 Swal.fire({
@@ -130,174 +275,3 @@
     </script>
 </body>
 </html>
-<script>
-// เพิ่มฟังก์ชันส่ง Flex Message
-async function sendFlexMessage() {
-  try {
-    const flexMessage = {
-      type: 'flex',
-      altText: 'ลงทะเบียนเรียบร้อย',
-      contents: {
-        type: 'bubble',
-        styles: {
-          header: { backgroundColor: '#f0f0f0' },
-          footer: { backgroundColor: '#f0f0f0' },
-          body: { backgroundColor: '#ffffff' }
-        },
-        header: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'ข้อมูลลงทะเบียนสำเร็จ',
-              weight: 'bold',
-              size: 'lg',
-              color: '#000000',
-              align: 'center'
-            }
-          ]
-        },
-        body: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'box',
-              layout: 'vertical',
-              margin: 'lg',
-              spacing: 'sm',
-              contents: [
-                {
-                  type: 'box',
-                  layout: 'horizontal',
-                  contents: [
-                    {
-                      type: 'text',
-                      text: 'ชื่อ-สกุล',
-                      size: 'sm',
-                      color: '#555555',
-                      flex: 1
-                    },
-                    {
-                      type: 'text',
-                      text: document.getElementById('nameId').value,
-                      size: 'sm',
-                      color: '#111111',
-                      align: 'end',
-                      flex: 2
-                    }
-                  ]
-                },
-                {
-                  type: 'box',
-                  layout: 'horizontal',
-                  contents: [
-                    {
-                      type: 'text',
-                      text: 'เบอร์โทรศัพท์',
-                      size: 'sm',
-                      color: '#555555',
-                      flex: 1
-                    },
-                    {
-                      type: 'text',
-                      text: document.getElementById('phoneId').value,
-                      size: 'sm',
-                      color: '#111111',
-                      align: 'end',
-                      flex: 2
-                    }
-                  ]
-                },
-                {
-                  type: 'box',
-                  layout: 'horizontal',
-                  contents: [
-                    {
-                      type: 'text',
-                      text: 'เลขบัตรการกุศล',
-                      size: 'sm',
-                      color: '#555555',
-                      flex: 1
-                    },
-                    {
-                      type: 'text',
-                      text: document.getElementById('charityId').value,
-                      size: 'sm',
-                      color: '#111111',
-                      align: 'end',
-                      flex: 2
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        footer: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'ยินดีต้อนรับ!',
-              size: 'sm',
-              color: '#aaaaaa',
-              align: 'center'
-            }
-          ]
-        }
-      }
-    };
-
-    // ตรวจสอบการอนุญาตก่อนส่งข้อความ
-    if (liff.isApiAvailable('sendMessages')) {
-      await liff.sendMessages([flexMessage]);
-    } else {
-      console.log('ไม่สามารถส่งข้อความได้');
-    }
-    
-  } catch (error) {
-    console.error('ส่ง Flex Message ไม่สำเร็จ:', error);
-    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อความยืนยันได้', 'error');
-  }
-}
-
-// ปรับปรุงส่วนการส่งฟอร์ม
-document.getElementById('registrationForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const formData = {
-    userlineId: document.getElementById('userlineId').value,
-    nameId: document.getElementById('nameId').value.trim(),
-    phoneId: document.getElementById('phoneId').value.trim(),
-    charityId: document.getElementById('charityId').value.trim()
-  };
-
-  Swal.fire({
-    title: 'กำลังบันทึกข้อมูล...',
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
-
-  try {
-    const result = await submitForm(formData);
-    if (result === "success") {
-      await sendFlexMessage(); // เรียกใช้ฟังก์ชันส่งข้อความ
-      Swal.fire({
-        icon: 'success',
-        title: 'บันทึกข้อมูลสำเร็จ!',
-        text: 'ขอบคุณที่ร่วมลงทะเบียน',
-        confirmButtonText: 'ปิด'
-      }).then(() => liff.closeWindow());
-    }
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'เกิดข้อผิดพลาด!',
-      text: error.message
-    });
-  }
-});
-</script>
