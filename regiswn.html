@@ -1,291 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียน</title>
+    <title>ลงทะเบียนชิงโชคบัตรการกุศล</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
 </head>
-<body class="bg-slate-100 min-h-screen">
-<div class="max-w-md m-auto p-2">
-    <!-- ส่วนหัว: ข้อความพร้อมกรอบข้อความ -->
-    <div class="bg-white rounded-lg p-6 mb-4 text-center border-2 border-blue-500 shadow-lg">
-        <h1 class="text-3xl font-bold text-blue-700 mb-2">ลงทะเบียนชิงโชค</h1>
-        <h2 class="text-xl text-gray-700">บัตรการกุศล</h2>
-        <h3 class="text-lg text-gray-600">วัดพุทธบูชา ป่าโคกปราสาท</h3>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-md mx-auto p-4">
+        <!-- ส่วนหัว -->
+        <div class="bg-white rounded-lg p-6 mb-4 text-center border-4 border-blue-600 shadow-xl">
+            <h1 class="text-3xl font-bold text-blue-800 mb-2">ลงทะเบียนชิงโชค</h1>
+            <h2 class="text-xl text-gray-800 font-semibold">บัตรการกุศล</h2>
+            <h3 class="text-lg text-gray-600 mt-1">วัดพุทธบูชา ป่าโคกปราสาท</h3>
+        </div>
+
+        <!-- ฟอร์มลงทะเบียน -->
+        <div class="bg-white rounded-lg p-6 shadow-md">
+            <form id="registrationForm" class="space-y-4">
+                <input type="hidden" id="userlineId">
+                <div>
+                    <label class="block text-gray-700 mb-2">ชื่อ-สกุล</label>
+                    <input type="text" id="nameId" 
+                           class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                           required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">เบอร์โทรศัพท์</label>
+                    <input type="tel" id="phoneId" 
+                           class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                           pattern="[0-9]{10}" 
+                           required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">เลขบัตรการกุศล</label>
+                    <input type="text" id="charityId" 
+                           class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                           required>
+                </div>
+                <button type="submit" 
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                    บันทึกข้อมูล
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- ฟอร์มลงทะเบียน -->
-    <form>
-        <div class="bg-white rounded-lg p-10">    
-            <div class="flex flex-col">
-                <!-- ฟิลด์ Line ID ที่ซ่อนไว้ -->
-                <input type="hidden" id="userlineId" name="userlineId">
-                <div class="mb-4">
-                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="nameId" placeholder="ชื่อ-สกุล" name="nameId" required>
-                </div>
-                <div class="mb-4">
-                    <input type="tel" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="phoneId" placeholder="เบอร์โทรศัพท์" name="phoneId" required>
-                </div>
-                <div class="mb-6">
-                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="charityId" placeholder="เลขบัตรการกุศล" name="charityId" required>
-                </div>
-            </div>
-            <button type="button" id="submitBtn" class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-blue-700">บันทึกข้อมูล</button>
-        </div>
-    </form>
-</div>
-<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-<script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxx97UOptEh58WiCrSnSn2qrEp-WiBjXJGAY5uHyrfKb2rCEZnUDMZt0eBJZa8Ebe-J/exec'; 
-    const LIFF_ID = '2007080925-ElPeyOda';
+    <script>
+        const LIFF_ID = '2007080925-ElPeyOda'; // เปลี่ยนเป็น LIFF ID ของคุณ
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznMSL7xZALurNHRF_CRJC1tj9ITponXX2dk32Jx8W32MbYZaY_ETjsmYqqnluDGV8Cog/exec';
 
-    window.onload = function () {
-        initializeLiff();
-    };
-
-    async function initializeLiff() {
-        await liff.init({ liffId: `${LIFF_ID}` });
-
-        if (liff.isLoggedIn()) {
-            getUserProfile();
-        } else {
-            liff.login();
-        }
-    }
-
-    async function getUserProfile() {
-        try {
-            const profile = await liff.getProfile();
-            document.getElementById('userlineId').value = profile.userId;
-        } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลโปรไฟล์:', error);
-        }
-    }
-
-    async function sendFlexMessage() {
-        const flexMessage = {
-            type: 'flex',
-            altText: 'ลงทะเบียนเรียบร้อย',
-            contents: {
-                type: 'bubble',
-                styles: {
-                    header: { backgroundColor: '#f0f0f0' },
-                    footer: { backgroundColor: '#f0f0f0' },
-                    body: { backgroundColor: '#ffffff' }
-                },
-                header: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: 'ข้อมูลลงทะเบียนสำเร็จ',
-                            weight: 'bold',
-                            size: 'lg',
-                            color: '#000000',
-                            align: 'center'
-                        }
-                    ]
-                },
-                body: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'box',
-                            layout: 'vertical',
-                            margin: 'lg',
-                            spacing: 'sm',
-                            contents: [
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'ชื่อ-สกุล',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('nameId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'เบอร์โทรศัพท์',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('phoneId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'เลขบัตรการกุศล',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('charityId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                footer: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: 'ยินดีต้อนรับ!',
-                            size: 'sm',
-                            color: '#aaaaaa',
-                            align: 'center'
-                        }
-                    ]
+        // เริ่มต้น LIFF
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    document.getElementById('userlineId').value = profile.userId;
                 }
+            } catch (error) {
+                console.error('LIFF Error:', error);
+                Swal.fire('เกิดข้อผิดพลาด', 'กรุณาลองใหม่ภายหลัง', 'error');
             }
-        };
-
-        await liff.sendMessages([flexMessage]);
-    }
-
-    let url = `${WEB_APP_URL}`;
-    let userlineIdInput = document.getElementById("userlineId");
-    let nameIdInput = document.getElementById("nameId");
-    let phoneIdInput = document.getElementById("phoneId");
-    let charityIdInput = document.getElementById("charityId");
-    let submitBtn = document.getElementById("submitBtn");
-
-    function validateForm() {
-        const nameId = nameIdInput.value.trim();
-        const phoneId = phoneIdInput.value.trim();
-        const charityId = charityIdInput.value.trim();
-
-        if (nameId === '' || phoneId === '' || charityId === '') {
-            return false;
         }
 
-        return true;
-    }
+        // ส่งข้อมูลฟอร์ม
+        async function submitForm(data) {
+            try {
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "insertData",
+                        ...data
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Network Error');
+                return await response.text();
+            } catch (error) {
+                console.error('Submission Error:', error);
+                throw error;
+            }
+        }
 
-    submitBtn.addEventListener('click', async (event) => {
-        event.preventDefault();
+        // จัดการการส่งฟอร์ม
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                userlineId: document.getElementById('userlineId').value,
+                nameId: document.getElementById('nameId').value.trim(),
+                phoneId: document.getElementById('phoneId').value.trim(),
+                charityId: document.getElementById('charityId').value.trim()
+            };
 
-        if (!validateForm()) {
             Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'กรุณากรอกข้อมูลในช่องที่จำเป็น.',
+                title: 'กำลังบันทึกข้อมูล...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
-            return;
-        }
 
-        const isConfirmed = await showConfirmationDialog();
-
-        if (isConfirmed) {
-            submitBtn.addEventListener('click', async (event) => {
-  event.preventDefault();
-
-  if (!validateForm()) {
-    Swal.fire('ผิดพลาด', 'กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
-    return;
-  }
-
-  try {
-    const obj = {
-      action: "insertData",
-      userlineId: userlineIdInput.value,
-      nameId: nameIdInput.value,
-      phoneId: phoneIdInput.value,
-      charityId: charityIdInput.value
-    };
-
-    Swal.fire({
-      title: 'กำลังบันทึก...',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
-
-    // เปลี่ยน URL เป็น URL ของคุณเอง
-    const response = await fetch('https://script.google.com/macros/s/AKfycbxx97UOptEh58WiCrSnSn2qrEp-WiBjXJGAY5uHyrfKb2rCEZnUDMZt0eBJZa8Ebe-J/exec', {
-      method: 'POST',
-      body: JSON.stringify(obj)
-    });
-
-    const result = await response.text();
-    
-    if (result === "บันทึกข้อมูลสำเร็จ") {
-      Swal.fire('สำเร็จ!', 'บันทึกข้อมูลเรียบร้อย', 'success').then(() => liff.closeWindow());
-      sendFlexMessage();
-    } else {
-      throw new Error(result);
-    }
-    
-  } catch (error) {
-    Swal.fire('ผิดพลาด!', `เกิดข้อผิดพลาด: ${error.message}`, 'error');
-    console.error('Submit Error:', error);
-  }
-});
-
-                console.error(error);
-            } finally {
-                submitBtn.disabled = false;
+            try {
+                const result = await submitForm(formData);
+                if (result === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกข้อมูลสำเร็จ!',
+                        text: 'ขอบคุณที่ร่วมลงทะเบียน',
+                        confirmButtonText: 'ปิด'
+                    }).then(() => liff.closeWindow());
+                } else {
+                    throw new Error(result);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด!',
+                    text: error.message
+                });
             }
-        } else {
-            Swal.fire('Submission Canceled', 'ข้อมูลของคุณไม่ได้ถูกส่ง.', 'info');
-        }
-    });
-
-    async function showConfirmationDialog() {
-        const confirmation = await Swal.fire({
-            title: 'ยืนยันการส่งข้อมูล',
-            text: 'แน่ใจ ว่าคุณกำลังส่งข้อมูล?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'ใช่, ส่งข้อมูล!',
-            cancelButtonText: 'ไม่, ยกเลิก'
         });
 
-        return confirmation.isConfirmed;
-    }
-</script>
+        // เริ่มทำงานเมื่อโหลดหน้าเว็บ
+        window.onload = initializeLiff;
+    </script>
 </body>
 </html>
