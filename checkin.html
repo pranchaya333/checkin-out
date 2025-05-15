@@ -1,180 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกการเข้าออกงาน</title>
-    <!-- นำเข้า Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- นำเข้า SweetAlert2 สำหรับแสดงกล่องข้อความแจ้งเตือน -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- นำเข้า LIFF SDK ของ LINE -->
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <style>
-        /* การตั้งค่าสำหรับ overlay ที่ใช้แสดงสถานะการโหลด */
-        #loadingOverlay { 
-            display: none; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: rgb(255 255 255 / 80%); 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 1000; 
-        }
-        /* การตั้งค่าสำหรับ container ของการโหลด */
-        .loading-container { 
-            position: relative; 
-        }
-        /* การตั้งค่าการกระพริบของข้อความ */
-        @keyframes blink { 
-            0%, 100% { opacity: 1; } 
-            50% { opacity: 0.5; } 
-        }
-        .blink { 
-            animation: blink 1s infinite; 
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>บันทึกการเข้าออกงาน</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(255 255 255 / 80%);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    .glass {
+      backdrop-filter: blur(12px);
+      background-color: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .ig-button {
+      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+      color: white;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .ig-button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    .input-field {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+  </style>
 </head>
+<body class="min-h-screen flex items-center justify-center px-2">
+  <div class="max-w-md w-full p-6 rounded-2xl shadow-lg glass">
+    <div class="mb-4 text-center text-xl font-semibold text-purple-800">👋🏻 สวัสดีครับคุณ</div>
+    <input type="text" id="displayName" name="displayName" class="input-field w-full p-2 mb-4 rounded-lg border border-gray-300" />
+    <div class="text-center text-lg font-bold text-pink-600 mb-4">🏆งานหนักไม่เคยฆ่าคน</div>
 
-<body class="bg-slate-100 h-screen">
-    <!-- กล่องใหญ่ที่เป็นกล่องสีขาวสำหรับเนื้อหาหลักของหน้า -->
-    <div class="max-w-md mx-auto bg-white p-8 m-2 rounded-lg shadow-md">
-        <!-- ส่วนนี้แสดงข้อความต้อนรับและชื่อผู้ใช้ -->
-        <div class="p-2">
-              <span>👋🏻 สวัสดีครับคุณ </span>
-            <input type="text" id="displayName" name="displayName">
-            <div class="text-m text-bold text-red-500">
-                <span>🏆 ค่าของคน อยู่ที่ผลของงาน</span>
-        </div>
-        <!-- กล่องแสดงวันที่และเวลา -->
-        <div class="bg-black-800 border rounded-lg text-slate-800 text-center my-4 py-8 px-4">
-            <div class="daytime">
-                <div id="date"></div>
-                <div class="text-5xl text-bold text-white-500" id="time"></div>
-                <!-- ฟิลด์ที่ซ่อนอยู่สำหรับรับค่า วันที่ และ เวลา -->
-                <input type="date" id="todayInput" name="todayInput" class="hidden">
-                <input type="time" id="currentTime" name="currentTime" class="hidden">
-            </div>
-        </div>
-        <!-- กล่องแสดงข้อมูลผู้ใช้ -->
-        <div id="step1">
-            <!-- หน้าต่างโหลดที่แสดงในขณะดึงข้อมูล -->
-            <div class="loading-container bg-slate-100 p-4 rounded-lg">
-                <div id="loadingOverlay">
-                    <div class="text-center text-gray-800">ค้นหารายชื่อ..</div>
-                </div>
-                <!-- ส่วนสำหรับกรอกข้อมูลชื่อ, รหัสพนักงาน, และตำแหน่ง -->
-                <div class="flex items-center space-x-2 mb-2">
-                    <input type="text" class="input-field w-full border border-gray-300 p-2 rounded" id="columnBData"
-                        placeholder="ชื่อ-สกุล" name="columnBData" required>
-                </div>
-                <div class="flex items-center space-x-2 mb-2">
-                    <input type="text" class="input-field w-full border border-gray-300 p-2 rounded" id="columnCData"
-                        placeholder="รหัสพนักงาน" name="columnCData" required>
-                </div>
-                <div class="flex items-center space-x-2 mb-2">
-                    <input type="text" class="input-field w-full border border-gray-300 p-2 rounded" id="columnDData"
-                        placeholder="ตำแหน่ง" name="columnDData" required>
-                </div>
-                <!-- ฟิลด์ที่ซ่อนอยู่สำหรับเก็บข้อมูลที่ไม่ต้องแสดงผล -->
-                <input type="hidden" id="userId" name="userId" />
-                <input type="hidden" id="columnAData" name="columnAData" />
-            </div>
-
-            <!-- กลุ่มปุ่มเลือกประเภทของงาน (เช่น เข้างาน, ระหว่างวัน, ออกงาน) -->
-            <div class="switch-field mt-4 mb-4 space-y-2">
-                <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden " />
-                    <label for="radio-three"
-                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
-                        เข้างาน
-                    </label>
-                </div>
-                <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden " />
-                    <label for="radio-four"
-                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
-                        ช่วงบ่าย
-                    </label>
-                </div>
-                <div class="flex items-center space-x-2 w-full">
-                    <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden " />
-                    <label for="radio-five"
-                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-lg w-full text-center">
-                        ออกงาน
-                    </label>
-                </div>
-            </div>
-            <input type="hidden" id="jobInput" name="jobInput" required>
-            <!-- หมายเหตุ -->
-            <textarea class="input-field w-full border border-gray-300 rounded-lg p-4 text-gray-700" placeholder="Note"
-                id="noteInput"></textarea>
-            <!-- ปุ่มสำหรับไปยังขั้นตอนถัดไป -->
-            <div class="bg-gray-300 slate-800 text-center rounded-lg my-4">
-                <button class="p-4 w-full" onclick="nextStep()">ถัดไป</button>
-            </div>
-        </div>
-
-        <!-- ขั้นตอนที่สอง: ถ่ายรูป -->
-        <div id="step2" class="hidden text-center">
-            <div class="photo" class="max-w-md w-[640px] h-[420px] p-[5px]">
-                <center>
-                    <video id="camera-preview" width="80%" height="auto" autoplay playsinline
-                        poster="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png"
-                        class="rounded-lg mt-2 "></video>
-                </center>
-                <center><img id="preview" width="80%" height="auto" alt="" required class="rounded-lg mt-2 "></center>
-                <div class="flex justify-center space-x-4 my-4 px-8">
-                    <button class="w-full text-center py-2 px-4 rounded-lg bg-yellow-500 text-white "
-                        id="start-camera-btn">เริ่มเปิดกล้อง</button>
-                    <button class="w-full text-center py-4 px-4 rounded-lg bg-green-500 text-white" id="capture-btn"
-                        disabled="">ถ่ายรูป</button>
-                </div>
-            </div>
-            <div class="input-group my-4 py-4 flex justify-between">
-                <button class="w-full text-center p-4  m-2 rounded-lg bg-gray-300" onclick="prevStep()">กลับ</button>
-                <button class="w-full text-center p-4 m-2 rounded-lg bg-gray-100 slate-800"
-                    onclick="checkPictureAndNextStep()">ถัดไป</button>
-            </div>
-        </div>
-
-        <!-- ขั้นตอนที่สาม: ยืนยันที่อยู่ -->
-        <div id="step3" class="hidden text-center">
-            <div class="submit">
-                <div class="w-full mb-4 rounded-lg bg-slate-800 text-white">
-                    <button type="button" onclick="getLocation()"
-                        class="w-full p-4 rounded-lg blink">กดเพื่อยืนยันที่อยู่ของคุณ</button>
-                </div>
-                <div id="locationInfo" name="locationInfo"
-                    class="bg-white p-4 rounded-lg shadow-sm max-w-sm mx-auto my-4">
-                    <div class="flex justify-between">
-                        <p id="latitude" class="text-gray-700 font-medium pb-2">Latitude: </p>
-                        <p id="longitude" class="text-gray-700 font-medium pb-2">Longitude: </p>
-                    </div>
-                    <p id="fullAddress">สถานที่</p>
-                </div>
-
-                <!-- ฟิลด์ที่ซ่อนอยู่สำหรับเก็บข้อมูลที่อยู่ -->
-                <input type="hidden" id="latitudeInput" name="latitudeInput">
-                <input type="hidden" id="longitudeInput" name="longitudeInput">
-                <input type="hidden" id="fullAddressInput" name="fullAddressInput" required>
-            </div>
-
-            <!-- แสดงแผนที่ Google Maps -->
-            <iframe id="mapIframe" class="p-2 rounded-lg shadow-md" width="100%" height="240" frameborder="0"
-                style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
-            <div class="input-group my-4 py-4 flex justify-between">
-                <button class="w-1/4 text-center p-4  m-2 rounded-lg bg-gray-300" onclick="prevStep()">กลับ</button>
-                <button id="submitButton" class="w-3/4 text-center p-4 m-2 rounded-lg bg-gray-200 slate-800"
-                    onclick="submitForm()">บันทึกข้อมูล</button>
-            </div>
-        </div>
+    <div class="bg-white bg-opacity-60 border rounded-lg text-center py-6 mb-6">
+      <div id="date" class="text-md text-gray-800 mb-2"></div>
+      <div id="time" class="text-5xl font-extrabold text-pink-600"></div>
+      <input type="date" id="todayInput" name="todayInput" class="hidden" />
+      <input type="time" id="currentTime" name="currentTime" class="hidden" />
     </div>
+
+    <!-- Step 1 -->
+    <div id="step1">
+      <div id="loadingOverlay" class="flex items-center justify-center">
+        <div class="text-gray-800 font-semibold">ค้นหารายชื่อ..</div>
+      </div>
+
+      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล"
+        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน"
+        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง"
+        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="hidden" id="userId" name="userId" />
+      <input type="hidden" id="columnAData" name="columnAData" />
+
+      <div class="mt-4 space-y-2">
+        <label class="block">
+          <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden" />
+          <div for="radio-three" class="ig-button p-3 rounded-lg text-center">เข้างาน</div>
+        </label>
+        <label class="block">
+          <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden" />
+          <div for="radio-four" class="ig-button p-3 rounded-lg text-center">ช่วงบ่าย</div>
+        </label>
+        <label class="block">
+          <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden" />
+          <div for="radio-five" class="ig-button p-3 rounded-lg text-center">ออกงาน</div>
+        </label>
+      </div>
+
+      <input type="hidden" id="jobInput" name="jobInput" required />
+      <textarea id="noteInput" placeholder="Note"
+        class="input-field w-full border border-gray-300 rounded-lg p-3 text-gray-700 mt-4"></textarea>
+
+      <button class="ig-button w-full p-3 rounded-xl mt-4" onclick="nextStep()">ถัดไป</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="step2" class="hidden text-center mt-6">
+      <video id="camera-preview" width="100%" class="rounded-lg shadow-md mb-2" autoplay playsinline></video>
+      <img id="preview" class="rounded-lg shadow-md mb-2" width="100%" alt="" required />
+      <div class="flex justify-center space-x-2 mt-4">
+        <button class="ig-button w-1/2 p-2 rounded-lg" id="start-camera-btn">เริ่มเปิดกล้อง</button>
+        <button class="ig-button w-1/2 p-2 rounded-lg" id="capture-btn" disabled>ถ่ายรูป</button>
+      </div>
+      <div class="flex justify-between mt-4">
+        <button class="w-1/2 p-3 m-1 rounded-lg bg-gray-200" onclick="prevStep()">กลับ</button>
+        <button class="w-1/2 p-3 m-1 rounded-lg bg-green-300" onclick="checkPictureAndNextStep()">ถัดไป</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="step3" class="hidden text-center mt-6">
+      <button onclick="getLocation()" class="ig-button w-full p-3 rounded-lg blink">กดเพื่อยืนยันที่อยู่ของคุณ</button>
+      <div id="locationInfo" class="bg-white bg-opacity-80 p-4 rounded-lg mt-4 shadow">
+        <div class="flex justify-between text-sm text-gray-700">
+          <p id="latitude">Latitude: </p>
+          <p id="longitude">Longitude: </p>
+        </div>
+        <p id="fullAddress" class="text-sm text-gray-800">สถานที่</p>
+      </div>
+
+      <input type="hidden" id="latitudeInput" name="latitudeInput" />
+      <input type="hidden" id="longitudeInput" name="longitudeInput" />
+      <input type="hidden" id="fullAddressInput" name="fullAddressInput" required />
+
+      <iframe id="mapIframe" class="rounded-lg shadow mt-4" width="100%" height="240" frameborder="0" style="border:0;"
+        allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+
+      <div class="flex justify-between mt-4">
+        <button class="w-1/3 p-3 rounded-lg bg-gray-200" onclick="prevStep()">กลับ</button>
+        <button id="submitButton" class="ig-button w-2/3 p-3 rounded-lg" onclick="submitForm()">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
 </body>
 <script>
 
