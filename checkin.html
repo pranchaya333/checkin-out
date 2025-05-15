@@ -85,7 +85,7 @@
 <body class="min-h-screen flex items-center justify-center px-2">
   <div class="max-w-md w-full p-6 rounded-2xl shadow-lg glass">
     <div class="mb-4 text-center text-xl font-semibold text-purple-800">👋🏻 สวัสดีครับคุณ</div>
-    <input type="text" id="displayName" name="displayName" class="input-field w-full p-2 mb-4 rounded-lg border border-gray-300" />
+    <input type="text" id="displayName" name="displayName" class="input-field w-full p-1 mb-2 rounded-lg border border-gray-300" />
     <div class="text-center text-lg font-bold text-pink-600 mb-4">🏆งานหนักไม่เคยฆ่าคน</div>
 
     <div class="bg-white bg-opacity-60 border rounded-lg text-center py-6 mb-6">
@@ -101,9 +101,9 @@
         <div class="text-gray-800 font-semibold">ค้นหารายชื่อ..</div>
       </div>
 
-      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
-      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
-      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล" class="input-field w-full p-1 mb-1 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน" class="input-field w-full p-1 mb-1 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง" class="input-field w-full p-1 mb-1 rounded-lg border border-gray-300" required />
       <input type="hidden" id="userId" name="userId" />
       <input type="hidden" id="columnAData" name="columnAData" />
 
@@ -127,8 +127,8 @@
 
       <input type="hidden" id="jobInput" name="jobInput" required />
       <textarea id="noteInput" placeholder="Note" class="input-field w-full border border-gray-300 rounded-lg p-3 text-gray-700 mt-4"></textarea>
-      <button class="ig-button w-full p-3 rounded-xl mt-4" onclick="nextStep()">ถัดไป</button>
-    </div>
+      <button class="w-full p-4 rounded-xl bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" onclick="nextStep()">ถัดไป</button>
+      </div>
 
     <!-- Step 2 -->
     <div id="step2" class="hidden text-center mt-6">
