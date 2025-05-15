@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -16,9 +17,17 @@
     }
 
     @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     #loadingOverlay {
@@ -35,8 +44,14 @@
     }
 
     @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
     }
 
     .blink {
@@ -58,7 +73,7 @@
 
     .ig-button:hover {
       transform: scale(1.02);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     }
 
     .input-field {
@@ -66,6 +81,7 @@
     }
   </style>
 </head>
+
 <body class="min-h-screen flex items-center justify-center px-2">
   <div class="max-w-md w-full p-6 rounded-2xl shadow-lg glass">
     <div class="mb-4 text-center text-xl font-semibold text-purple-800">👋🏻 สวัสดีครับคุณ</div>
@@ -85,34 +101,32 @@
         <div class="text-gray-800 font-semibold">ค้นหารายชื่อ..</div>
       </div>
 
-      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล"
-        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
-      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน"
-        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
-      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง"
-        class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
+      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง" class="input-field w-full p-2 mb-2 rounded-lg border border-gray-300" required />
       <input type="hidden" id="userId" name="userId" />
       <input type="hidden" id="columnAData" name="columnAData" />
 
-      <div class="mt-4 space-y-2">
-        <label class="block">
-          <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden" />
-          <div for="radio-three" class="ig-button p-3 rounded-lg text-center">เข้างาน</div>
-        </label>
-        <label class="block">
-          <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden" />
-          <div for="radio-four" class="ig-button p-3 rounded-lg text-center">ช่วงบ่าย</div>
-        </label>
-        <label class="block">
-          <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden" />
-          <div for="radio-five" class="ig-button p-3 rounded-lg text-center">ออกงาน</div>
-        </label>
+      <!-- ปุ่มเลือกประเภทของงาน -->
+      <div class="switch-field mt-4 mb-4 space-y-2">
+        <div class="flex items-center space-x-2 w-full">
+          <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden peer" />
+          <label for="radio-three" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-pink-500 peer-checked:to-yellow-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">เข้างาน</label>
+        </div>
+
+        <div class="flex items-center space-x-2 w-full">
+          <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden peer" />
+          <label for="radio-four" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">ช่วงบ่าย</label>
+        </div>
+
+        <div class="flex items-center space-x-2 w-full">
+          <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden peer" />
+          <label for="radio-five" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-yellow-500 peer-checked:to-red-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">ออกงาน</label>
+        </div>
       </div>
 
       <input type="hidden" id="jobInput" name="jobInput" required />
-      <textarea id="noteInput" placeholder="Note"
-        class="input-field w-full border border-gray-300 rounded-lg p-3 text-gray-700 mt-4"></textarea>
-
+      <textarea id="noteInput" placeholder="Note" class="input-field w-full border border-gray-300 rounded-lg p-3 text-gray-700 mt-4"></textarea>
       <button class="ig-button w-full p-3 rounded-xl mt-4" onclick="nextStep()">ถัดไป</button>
     </div>
 
@@ -145,8 +159,7 @@
       <input type="hidden" id="longitudeInput" name="longitudeInput" />
       <input type="hidden" id="fullAddressInput" name="fullAddressInput" required />
 
-      <iframe id="mapIframe" class="rounded-lg shadow mt-4" width="100%" height="240" frameborder="0" style="border:0;"
-        allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+      <iframe id="mapIframe" class="rounded-lg shadow mt-4" width="100%" height="240" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
 
       <div class="flex justify-between mt-4">
         <button class="w-1/3 p-3 rounded-lg bg-gray-200" onclick="prevStep()">กลับ</button>
