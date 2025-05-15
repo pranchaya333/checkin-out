@@ -2,171 +2,167 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>บันทึกการเข้าออกงาน</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-    }
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกการเข้าออกงาน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <style>
+        /* Overlay for loading status */
+        #loadingOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
 
-    @keyframes gradientBG {
-      0% {
-        background-position: 0% 50%;
-      }
+        /* Loading container settings */
+        .loading-container {
+            position: relative;
+        }
 
-      50% {
-        background-position: 100% 50%;
-      }
+        /* Blinking animation for text */
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
 
-      100% {
-        background-position: 0% 50%;
-      }
-    }
+        .blink {
+            animation: blink 1s infinite;
+        }
 
-    #loadingOverlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgb(255 255 255 / 80%);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    @keyframes blink {
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    .blink {
-      animation: blink 1s infinite;
-    }
-
-    .glass {
-      backdrop-filter: blur(12px);
-      background-color: rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .ig-button {
-      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-      color: white;
-      font-weight: bold;
-      transition: transform 0.2s;
-    }
-
-    .ig-button:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-    }
-
-    .input-field {
-      background-color: rgba(255, 255, 255, 0.8);
-    }
-  </style>
+        /* Custom styles for radio button labels to give them a selected state */
+        input[type="radio"]:checked + label {
+            background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center px-2">
-  <div class="max-w-md w-full p-6 rounded-2xl shadow-lg glass">
-    <div class="mb-2 text-center text-xl font-semibold text-purple-800">👋🏻 สวัสดีครับคุณ</div>
-    <input type="text" id="displayName" name="displayName" class="input-field w-full p-0.5 text-xs mb-2 rounded-md border border-gray-300" />
-    <div class="text-center text-lg font-bold text-pink-600 mb-4">🏆งานหนักไม่เคยฆ่าคน</div>
+<body class="bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white p-8 m-2 rounded-3xl shadow-xl transform transition-all duration-300 hover:scale-105">
+        <div class="p-2 mb-4">
+            <span class="text-gray-700 text-lg font-semibold">👋🏻 สวัสดีครับคุณ </span>
+            <input type="text" id="displayName" name="displayName" class="input-field w-full p-0.5 text-xs mb-2 rounded-md border border-gray-300" />
+        </div>
 
-    <div class="bg-white bg-opacity-60 border rounded-lg text-center py-6 mb-6">
-      <div id="date" class="text-md text-gray-800 mb-2"></div>
-      <div id="time" class="text-6xl font-extrabold text-pink-600"></div>
-      <input type="date" id="todayInput" name="todayInput" class="hidden" />
-      <input type="time" id="currentTime" name="currentTime" class="hidden" />
+        <div class="bg-gradient-to-r from-pink-300 to-purple-400 border border-transparent rounded-2xl text-white text-center my-4 py-8 px-4 shadow-lg">
+            <div class="daytime">
+                <div id="date" class="text-lg font-medium"></div>
+                <div class="text-6xl font-extrabold text-white drop-shadow-md" id="time"></div>
+                <input type="date" id="todayInput" name="todayInput" class="hidden">
+                <input type="time" id="currentTime" name="currentTime" class="hidden">
+            </div>
+        </div>
+
+        <div id="step1">
+            <div class="loading-container bg-gray-50 p-4 rounded-xl shadow-inner">
+                <div id="loadingOverlay">
+                    <div class="text-center text-gray-600">ค้นหารายชื่อ..</div>
+                </div>
+                <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
+                <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
+                <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
+                <input type="hidden" id="userId" name="userId" />
+                <input type="hidden" id="columnAData" name="columnAData" />
+            </div>
+
+            <div class="switch-field mt-6 mb-6 space-y-3">
+                <div class="flex items-center space-x-2 w-full">
+                    <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden" />
+                    <label for="radio-three"
+                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-xl w-full text-center text-gray-700 font-medium transition-all duration-200 ease-in-out hover:shadow-md hover:border-pink-400">
+                        เข้างาน
+                    </label>
+                </div>
+                <div class="flex items-center space-x-2 w-full">
+                    <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden" />
+                    <label for="radio-four"
+                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-xl w-full text-center text-gray-700 font-medium transition-all duration-200 ease-in-out hover:shadow-md hover:border-purple-400">
+                        ช่วงบ่าย
+                    </label>
+                </div>
+                <div class="flex items-center space-x-2 w-full">
+                    <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden" />
+                    <label for="radio-five"
+                        class="cursor-pointer border border-gray-300 px-4 py-3 rounded-xl w-full text-center text-gray-700 font-medium transition-all duration-200 ease-in-out hover:shadow-md hover:border-yellow-400">
+                        ออกงาน
+                    </label>
+                </div>
+            </div>
+            <input type="hidden" id="jobInput" name="jobInput" required>
+            <textarea class="input-field w-full border border-gray-200 rounded-xl p-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300" placeholder="Note"
+                id="noteInput"></textarea>
+            <div class="my-4">
+                <button class="w-full p-4 rounded-xl bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" onclick="nextStep()">ถัดไป</button>
+            </div>
+        </div>
+
+        <div id="step2" class="hidden text-center">
+            <div class="photo">
+                <center>
+                    <video id="camera-preview" width="80%" height="auto" autoplay playsinline
+                        poster="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png"
+                        class="rounded-xl mt-4 shadow-md"></video>
+                </center>
+                <center><img id="preview" width="80%" height="auto" alt="" required class="rounded-xl mt-4 shadow-md"></center>
+                <div class="flex justify-center space-x-4 my-6 px-4">
+                    <button class="w-full text-center py-3 px-4 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                        id="start-camera-btn">เริ่มเปิดกล้อง</button>
+                    <button class="w-full text-center py-3 px-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300" id="capture-btn"
+                        disabled="">ถ่ายรูป</button>
+                </div>
+            </div>
+            <div class="input-group my-4 py-4 flex justify-between">
+                <button class="w-full text-center p-4 m-2 rounded-xl bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-all duration-200" onclick="prevStep()">กลับ</button>
+                <button class="w-full text-center p-4 m-2 rounded-xl bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                    onclick="checkPictureAndNextStep()">ถัดไป</button>
+            </div>
+        </div>
+
+        <div id="step3" class="hidden text-center">
+            <div class="submit">
+                <div class="w-full mb-4 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
+                    <button type="button" onclick="getLocation()"
+                        class="w-full p-4 rounded-xl blink font-bold text-lg hover:opacity-90 transition-opacity duration-200">กดเพื่อยืนยันที่อยู่ของคุณ</button>
+                </div>
+                <div id="locationInfo" name="locationInfo"
+                    class="bg-gray-50 p-4 rounded-xl shadow-md max-w-sm mx-auto my-4 text-left">
+                    <div class="flex justify-between flex-wrap">
+                        <p id="latitude" class="text-gray-700 font-semibold pb-2">Latitude: </p>
+                        <p id="longitude" class="text-gray-700 font-semibold pb-2">Longitude: </p>
+                    </div>
+                    <p id="fullAddress" class="text-gray-800 text-base">สถานที่</p>
+                </div>
+
+                <input type="hidden" id="latitudeInput" name="latitudeInput">
+                <input type="hidden" id="longitudeInput" name="longitudeInput">
+                <input type="hidden" id="fullAddressInput" name="fullAddressInput" required>
+            </div>
+
+            <iframe id="mapIframe" class="p-2 rounded-xl shadow-md" width="100%" height="240" frameborder="0"
+                style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            <div class="input-group my-4 py-4 flex justify-between">
+                <button class="w-1/4 text-center p-4 m-2 rounded-xl bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-all duration-200" onclick="prevStep()">กลับ</button>
+                <button id="submitButton" class="w-3/4 text-center p-4 m-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    onclick="submitForm()">บันทึกข้อมูล</button>
+            </div>
+        </div>
     </div>
-
-    <!-- Step 1 -->
-    <div id="step1">
-      <div id="loadingOverlay" class="flex items-center justify-center">
-        <div class="text-gray-800 font-semibold">ค้นหารายชื่อ..</div>
-      </div>
-
-      <input type="text" id="columnBData" name="columnBData" placeholder="ชื่อ-สกุล"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
-      <input type="text" id="columnCData" name="columnCData" placeholder="รหัสพนักงาน"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
-      <input type="text" id="columnDData" name="columnDData" placeholder="ตำแหน่ง"class="input-field w-full p-[1px] text-[8px] mb-[1px] rounded border border-gray-300 leading-none" required />
-      <input type="hidden" id="userId" name="userId" />
-      <input type="hidden" id="columnAData" name="columnAData" />
-
-      <!-- ปุ่มเลือกประเภทของงาน -->
-      <div class="switch-field mt-4 mb-4 space-y-2">
-        <div class="flex items-center space-x-2 w-full">
-          <input type="radio" id="radio-three" name="switch-job" value="เข้างาน" class="hidden peer" />
-          <label for="radio-three" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-pink-500 peer-checked:to-yellow-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">เข้างาน</label>
-        </div>
-
-        <div class="flex items-center space-x-2 w-full">
-          <input type="radio" id="radio-four" name="switch-job" value="ช่วงบ่าย" class="hidden peer" />
-          <label for="radio-four" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">ช่วงบ่าย</label>
-        </div>
-
-        <div class="flex items-center space-x-2 w-full">
-          <input type="radio" id="radio-five" name="switch-job" value="ออกงาน" class="hidden peer" />
-          <label for="radio-five" class="transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-yellow-500 peer-checked:to-red-500 peer-checked:text-white border border-gray-300 px-4 py-3 rounded-lg w-full text-center cursor-pointer hover:scale-105 hover:shadow-md">ออกงาน</label>
-        </div>
-      </div>
-
-      <input type="hidden" id="jobInput" name="jobInput" required />
-      <textarea id="noteInput" placeholder="Note" class="input-field w-full border border-gray-300 rounded-lg p-3 text-gray-700 mt-4"></textarea>
-      <button class="w-full p-4 rounded-xl bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" onclick="nextStep()">ถัดไป</button>
-      </div>
-
-    <!-- Step 2 -->
-    <div id="step2" class="hidden text-center mt-6">
-      <video id="camera-preview" width="100%" class="rounded-lg shadow-md mb-2" autoplay playsinline></video>
-      <img id="preview" class="rounded-lg shadow-md mb-2" width="100%" alt="" required />
-      <div class="flex justify-center space-x-2 mt-4">
-        <button class="ig-button w-1/2 p-2 rounded-lg" id="start-camera-btn">เริ่มเปิดกล้อง</button>
-        <button class="ig-button w-1/2 p-2 rounded-lg" id="capture-btn" disabled>ถ่ายรูป</button>
-      </div>
-      <div class="flex justify-between mt-4">
-        <button class="w-1/2 p-3 m-1 rounded-lg bg-gray-200" onclick="prevStep()">กลับ</button>
-        <button class="w-1/2 p-3 m-1 rounded-lg bg-green-300" onclick="checkPictureAndNextStep()">ถัดไป</button>
-      </div>
-    </div>
-
-    <!-- Step 3 -->
-    <div id="step3" class="hidden text-center mt-6">
-      <button onclick="getLocation()" class="ig-button w-full p-3 rounded-lg blink">กดเพื่อยืนยันที่อยู่ของคุณ</button>
-      <div id="locationInfo" class="bg-white bg-opacity-80 p-4 rounded-lg mt-4 shadow">
-        <div class="flex justify-between text-sm text-gray-700">
-          <p id="latitude">Latitude: </p>
-          <p id="longitude">Longitude: </p>
-        </div>
-        <p id="fullAddress" class="text-sm text-gray-800">สถานที่</p>
-      </div>
-
-      <input type="hidden" id="latitudeInput" name="latitudeInput" />
-      <input type="hidden" id="longitudeInput" name="longitudeInput" />
-      <input type="hidden" id="fullAddressInput" name="fullAddressInput" required />
-
-      <iframe id="mapIframe" class="rounded-lg shadow mt-4" width="100%" height="240" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
-
-      <div class="flex justify-between mt-4">
-        <button class="w-1/3 p-3 rounded-lg bg-gray-200" onclick="prevStep()">กลับ</button>
-        <button id="submitButton" class="ig-button w-2/3 p-3 rounded-lg" onclick="submitForm()">บันทึกข้อมูล</button>
-      </div>
-    </div>
-  </div>
 </body>
 <script>
 
