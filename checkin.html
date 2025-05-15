@@ -484,195 +484,209 @@ async function sendFlexMessage() {
         jobColor = '#000000FF'; // สีดำเป็นค่าเริ่มต้นหากไม่ใช่ "เข้างาน", "ช่วงบ่าย", หรือ "ออกงาน"
     }
 
-    const flexMessage = {
-        type: 'flex',
-        altText: 'จดบันทึกเวลางาน',
-        contents: {
-            type: 'bubble',
-            direction: 'ltr',
-            body: {
-                type: 'box',
-                layout: 'vertical',
-                spacing: 'md',
-                contents: [
-                    {
-                        type: 'box',
-                        layout: 'horizontal',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: 'บันทึกเวลางาน',
-                                weight: 'bold',
-                                size: 'md',
-                                align: 'start',
-                                margin: 'sm',
-                                contents: [],
-                            },
-                            {
-                                type: 'text',
-                                text: ` ${jobInput.value}`,
-                                weight: 'bold',
-                                size: 'md',
-                                color: jobColor,
-                                align: 'end',
-                                contents: [],
-                            },
-                        ],
-                    },
-                    {
-                        type: 'separator',
-                    },
-                    {
-                        type: 'box',
-                        layout: 'vertical',
-                        spacing: 'sm',
-                        contents: [
-                            {
-                                type: 'box',
-                                layout: 'baseline',
-                                contents: [
-                                    {
-                                        type: 'text',
-                                        text: 'ชื่อพนักงาน',
-                                        weight: 'bold',
-                                        size: 'sm',
-                                        margin: 'sm',
-                                        contents: [],
-                                    },
-                                    {
-                                        type: 'text',
-                                        text: `${columnBData.value}`,
-                                        size: 'sm',
-                                        color: '#000000FF',
-                                        align: 'end',
-                                        contents: [],
-                                    },
-                                ],
-                            },
-                            {
-                                type: 'box',
-                                layout: 'baseline',
-                                contents: [
-                                    {
-                                        type: 'text',
-                                        text: 'รหัสพนักงาน',
-                                        weight: 'bold',
-                                        size: 'sm',
-                                        flex: 0,
-                                        margin: 'sm',
-                                        contents: [],
-                                    },
-                                    {
-                                        type: 'text',
-                                        text: `${columnCData.value}`,
-                                        size: 'sm',
-                                        color: '#000000FF',
-                                        align: 'end',
-                                        contents: [],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        type: 'separator',
-                    },
-                    {
-                        type: 'box',
-                        layout: 'vertical',
-                        contents: [
-                            {
-                                type: 'box',
-                                layout: 'baseline',
-                                contents: [
-                                    {
-                                        type: 'text',
-                                        text: 'วันที่',
-                                        weight: 'bold',
-                                        contents: [],
-                                    },
-                                    {
-                                        type: 'text',
-                                        text: `${getFormattedDate(todayInput.value)}`,
-                                        weight: 'bold',
-                                        align: 'end',
-                                        contents: [],
-                                    },
-                                ],
-                            },
-                            {
-                                type: 'box',
-                                layout: 'baseline',
-                                contents: [
-                                    {
-                                        type: 'text',
-                                        text: 'เวลา',
-                                        weight: 'bold',
-                                        contents: [],
-                                    },
-                                    {
-                                        type: 'text',
-                                        text: `${currentTime.value}`,
-                                        weight: 'bold',
-                                        size: 'xl',
-                                        color: jobColor, // เปลี่ยนสีตามประเภทงาน
-                                        align: 'end',
-                                        contents: [],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        type: 'separator',
-                    },
-                    {
-                        type: 'box',
-                        layout: 'vertical',
-                        spacing: 'xs',
-                        margin: 'sm',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: 'สถานที่',
-                                weight: 'bold',
-                                size: 'sm',
-                                margin: 'md',
-                                contents: [],
-                            },
-                            {
-                                type: 'text',
-                                text: fullAddressInput.value ? `${fullAddressInput.value}` : 'ข้อมูลไม่พร้อมแสดง แต่เราเก็บพิกัดของคุณเรียบร้อย',
-                                wrap: true,
-                                contents: [],
-                            },
-                        ],
-                    },
-                    lateMessage ? {
-                        type: 'separator',
-                    } : null,
-                    lateMessage ? {
-                        type: 'box',
-                        layout: 'vertical',
-                        spacing: 'xs',
-                        margin: 'sm',
-                        contents: [
-                            {
-                                type: 'text',
-                                text: lateMessage,
-                                weight: 'bold',
-                                size: 'sm',
-                                margin: 'md',
-                                color: (jobInput.value === 'ออกงาน') ? '#0D9608FF' : '#EF2F14FF', // สีเขียวสำหรับ "ออกงาน", สีแดงสำหรับ "ช่วงบ่าย"
-                                contents: [],
-                            },
-                        ],
-                    } : null,
-                ].filter(Boolean),
-            },
-        },
-    };
+jobColor = '#000000FF'; // สีดำเป็นค่าเริ่มต้นหากไม่ใช่ "เข้างาน", "ช่วงบ่าย", หรือ "ออกงาน"
 
+const flexMessage = {
+    type: 'flex',
+    altText: 'จดบันทึกเวลางาน',
+    contents: {
+        type: 'bubble',
+        direction: 'ltr',
+        body: {
+            type: 'box',
+            layout: 'vertical',
+            spacing: 'md',
+            backgroundColor: '#FFF0F5', // สีพื้นหลังอ่อนโทนชมพูอ่อน
+            contents: [
+                {
+                    type: 'box',
+                    layout: 'horizontal',
+                    contents: [
+                        {
+                            type: 'text',
+                            text: 'บันทึกเวลางาน',
+                            weight: 'bold',
+                            size: 'md',
+                            align: 'start',
+                            margin: 'sm',
+                            color: '#6B21A8', // ม่วงเข้ม
+                            contents: [],
+                        },
+                        {
+                            type: 'text',
+                            text: ` ${jobInput.value}`,
+                            weight: 'bold',
+                            size: 'md',
+                            color: jobColor,
+                            align: 'end',
+                            contents: [],
+                        },
+                    ],
+                },
+                {
+                    type: 'separator',
+                    color: '#E0BBE4', // ชมพูอมม่วง
+                },
+                {
+                    type: 'box',
+                    layout: 'vertical',
+                    spacing: 'sm',
+                    contents: [
+                        {
+                            type: 'box',
+                            layout: 'baseline',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'ชื่อพนักงาน',
+                                    weight: 'bold',
+                                    size: 'sm',
+                                    margin: 'sm',
+                                    color: '#6B7280', // เทานุ่ม
+                                    contents: [],
+                                },
+                                {
+                                    type: 'text',
+                                    text: `${columnBData.value}`,
+                                    size: 'sm',
+                                    color: '#111827',
+                                    align: 'end',
+                                    contents: [],
+                                },
+                            ],
+                        },
+                        {
+                            type: 'box',
+                            layout: 'baseline',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'รหัสพนักงาน',
+                                    weight: 'bold',
+                                    size: 'sm',
+                                    flex: 0,
+                                    margin: 'sm',
+                                    color: '#6B7280',
+                                    contents: [],
+                                },
+                                {
+                                    type: 'text',
+                                    text: `${columnCData.value}`,
+                                    size: 'sm',
+                                    color: '#111827',
+                                    align: 'end',
+                                    contents: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: 'separator',
+                    color: '#E0BBE4',
+                },
+                {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        {
+                            type: 'box',
+                            layout: 'baseline',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'วันที่',
+                                    weight: 'bold',
+                                    color: '#6B7280',
+                                    contents: [],
+                                },
+                                {
+                                    type: 'text',
+                                    text: `${getFormattedDate(todayInput.value)}`,
+                                    weight: 'bold',
+                                    align: 'end',
+                                    color: '#6B7280',
+                                    contents: [],
+                                },
+                            ],
+                        },
+                        {
+                            type: 'box',
+                            layout: 'baseline',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: 'เวลา',
+                                    weight: 'bold',
+                                    color: '#6B7280',
+                                    contents: [],
+                                },
+                                {
+                                    type: 'text',
+                                    text: `${currentTime.value}`,
+                                    weight: 'bold',
+                                    size: 'xl',
+                                    color: jobColor, // เปลี่ยนสีตามประเภทงาน
+                                    align: 'end',
+                                    contents: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: 'separator',
+                    color: '#E0BBE4',
+                },
+                {
+                    type: 'box',
+                    layout: 'vertical',
+                    spacing: 'xs',
+                    margin: 'sm',
+                    contents: [
+                        {
+                            type: 'text',
+                            text: 'สถานที่',
+                            weight: 'bold',
+                            size: 'sm',
+                            margin: 'md',
+                            color: '#6B7280',
+                            contents: [],
+                        },
+                        {
+                            type: 'text',
+                            text: fullAddressInput.value ? `${fullAddressInput.value}` : 'ข้อมูลไม่พร้อมแสดง แต่เราเก็บพิกัดของคุณเรียบร้อย',
+                            wrap: true,
+                            color: '#374151',
+                            contents: [],
+                        },
+                    ],
+                },
+                lateMessage ? {
+                    type: 'separator',
+                    color: '#E0BBE4',
+                } : null,
+                lateMessage ? {
+                    type: 'box',
+                    layout: 'vertical',
+                    spacing: 'xs',
+                    margin: 'sm',
+                    contents: [
+                        {
+                            type: 'text',
+                            text: lateMessage,
+                            weight: 'bold',
+                            size: 'sm',
+                            margin: 'md',
+                            color: (jobInput.value === 'ออกงาน') ? '#059669' : '#EF4444', // เขียวมรกต หรือ แดงสว่าง
+                            contents: [],
+                        },
+                    ],
+                } : null,
+            ].filter(Boolean),
+        },
+    },
+};
     await liff.sendMessages([flexMessage]);
     liff.closeWindow();
 }
