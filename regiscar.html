@@ -86,7 +86,8 @@
       userId = profile.userId;
       document.getElementById("userId").value = userId;
       document.getElementById("date").value = new Date().toISOString().split("T")[0];
-      document.getElementById("showUserId").innerText = "🆔 LINE User ID: " + userId;
+      document.getElementById("showUserId").innerText = "LINE User ID: " + userId;
+      document.getElementById("showUserId").style.color = "#000";
     }
 
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
