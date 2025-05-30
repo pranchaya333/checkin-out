@@ -1,39 +1,96 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>ข้อมูลส่วนตัว</title>
-    <style>
-      body { background-color: #000; color: gold; font-family: Arial; padding: 20px; }
-      .car { background: #111; border: 1px solid gold; margin: 10px 0; padding: 10px; border-radius: 8px; }
-    </style>
-  </head>
-  <body>
-    <h2>ข้อมูลรถของคุณ</h2>
-    <div id="carList"></div>
-    <script>
-      const liffId = '2007499630-r04RVeeV';
-      async function main() {
-        await liff.init({ liffId });
-        if (!liff.isLoggedIn()) liff.login();
-        const profile = await liff.getProfile();
-        const userId = profile.userId;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>ข้อมูลส่วนตัว</title>
+  <style>
+    body {
+      background-color: #000;
+      color: gold;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: gold;
+      margin-bottom: 20px;
+    }
+    .car {
+      background-color: #111;
+      border: 1px solid gold;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+    .car p {
+      margin: 5px 0;
+      font-size: 15px;
+      color: #FFD700;
+    }
+    .car span {
+      color: #ffffff;
+    }
+    .center {
+      text-align: center;
+    }
+    button {
+      background-color: gold;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>ข้อมูลรถของคุณ</h2>
+  <div id="carList"></div>
 
-        const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
-        const cars = await res.json();
+  <div class="center">
+    <button onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
+  </div>
 
-        const carList = document.getElementById("carList");
-        cars.forEach(c => {
-          carList.innerHTML += `
-            <div class="car">
-              <p>ชื่อ: ${c.name}</p>
-              <p>เบอร์: ${c.phone}</p>
-              <p>ทะเบียน: ${c.plate}</p>
-              <p>วันที่ลงทะเบียน: ${c.date}</p>
-            </div>
-          `;
-        });
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    const liffId = '2007499630-0J5jPaaP'; // LIFF ID เดียวกันกับหน้าฟอร์ม
+
+    async function main() {
+      await liff.init({ liffId });
+      if (!liff.isLoggedIn()) liff.login();
+
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+
+      const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
+      const cars = await res.json();
+
+      const carList = document.getElementById("carList");
+
+      if (cars.length === 0) {
+        carList.innerHTML = `<p class="center">🚗 ยังไม่มีข้อมูลการลงทะเบียน</p>`;
+        return;
       }
-      main();
-    </script>
-  </body>
+
+      cars.forEach((car, index) => {
+        const div = document.createElement("div");
+        div.className = "car";
+        div.innerHTML = `
+          <p><strong>🚘 คันที่ ${index + 1}</strong></p>
+          <p>ชื่อ: <span>${car.name}</span></p>
+          <p>เบอร์: <span>${car.phone}</span></p>
+          <p>ทะเบียน: <span>${car.plate}</span></p>
+          <p>วันที่ลงทะเบียน: <span>${car.date}</span></p>
+        `;
+        carList.appendChild(div);
+      });
+    }
+
+    main();
+  </script>
+</body>
 </html>
