@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset=\"UTF-8\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <title>ข้อมูลรถของคุณ</title>
   <style>
     body {
@@ -67,32 +67,22 @@
 </head>
 <body>
   <h2>ข้อมูลรถของคุณ</h2>
-  <div class=\"userid-text\" id=\"lineUserDisplay\">กำลังโหลด LINE User ID...</div>
+  <div class="userid-text" id="lineUserDisplay">กำลังโหลด LINE User ID...</div>
 
-  <div id=\"loading\" class=\"loading\">
-    <div class=\"loading-icon\">🔄</div>
+  <div id="loading" class="loading">
+    <div class="loading-icon">🔄</div>
     <p>กำลังค้นหาประวัติรถยนต์ของคุณ...</p>
   </div>
 
-  <div id=\"carList\" style=\"display: none;\"></div>
+  <div id="carList" style="display: none;"></div>
 
-  <div class=\"center\">
-    <button onclick=\"liff.closeWindow()\">ปิดหน้าต่างนี้</button>
+  <div class="center">
+    <button onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
   </div>
 
-  <script src=\"https://static.line-scdn.net/liff/edge/2/sdk.js\"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     const liffId = '2007499630-r04RVeeV'; // LIFF ID ของโบ๊ท
-
-    // แปลงวันที่แบบไทย
-    function formatThaiDate(isoDateString) {
-      const date = new Date(isoDateString);
-      date.setHours(date.getHours() + 7);
-      const day = date.getDate();
-      const month = date.toLocaleString('th-TH', { month: 'long' });
-      const year = date.getFullYear() + 543;
-      return `${day} ${month} ${year}`;
-    }
 
     async function main() {
       await liff.init({ liffId });
@@ -100,30 +90,30 @@
 
       const profile = await liff.getProfile();
       const userId = profile.userId;
-      document.getElementById(\"lineUserDisplay\").innerText = `LINE User ID: ${userId}`;
-      document.getElementById(\"lineUserDisplay\").style.color = \"#000\";
+      document.getElementById("lineUserDisplay").innerText = `LINE User ID: ${userId}`;
+      document.getElementById("lineUserDisplay").style.color = "#000"; // สีพื้นหลังคือดำ
 
       const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
       const cars = await res.json();
 
-      const carList = document.getElementById(\"carList\");
-      document.getElementById(\"loading\").style.display = \"none\";
-      carList.style.display = \"block\";
+      const carList = document.getElementById("carList");
+      document.getElementById("loading").style.display = "none"; // ซ่อนข้อความรอ
+      carList.style.display = "block";
 
       if (cars.length === 0) {
-        carList.innerHTML = `<p class=\"center\">🚗 ไม่พบประวัติรถของคุณ</p>`;
+        carList.innerHTML = `<p class="center">🚗 ไม่พบประวัติรถของคุณ</p>`;
         return;
       }
 
       cars.forEach((car, index) => {
-        const div = document.createElement(\"div\");
-        div.className = \"car\";
+        const div = document.createElement("div");
+        div.className = "car";
         div.innerHTML = `
           <p><strong>🚘 คันที่ ${index + 1}</strong></p>
           <p>ชื่อ: <span>${car.name}</span></p>
           <p>เบอร์: <span>${car.phone}</span></p>
           <p>ทะเบียน: <span>${car.plate}</span></p>
-          <p>วันที่ลงทะเบียน: <span>${formatThaiDate(car.date)}</span></p>
+          <p>วันที่ลงทะเบียน: <span>${car.date}</span></p>
         `;
         carList.appendChild(div);
       });
