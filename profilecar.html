@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ข้อมูลส่วนตัว</title>
+    <style>
+      body { background-color: #000; color: gold; font-family: Arial; padding: 20px; }
+      .car { background: #111; border: 1px solid gold; margin: 10px 0; padding: 10px; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <h2>ข้อมูลรถของคุณ</h2>
+    <div id="carList"></div>
+    <script>
+      const liffId = '2007499630-r04RVeeV';
+      async function main() {
+        await liff.init({ liffId });
+        if (!liff.isLoggedIn()) liff.login();
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
+
+        const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
+        const cars = await res.json();
+
+        const carList = document.getElementById("carList");
+        cars.forEach(c => {
+          carList.innerHTML += `
+            <div class="car">
+              <p>ชื่อ: ${c.name}</p>
+              <p>เบอร์: ${c.phone}</p>
+              <p>ทะเบียน: ${c.plate}</p>
+              <p>วันที่ลงทะเบียน: ${c.date}</p>
+            </div>
+          `;
+        });
+      }
+      main();
+    </script>
+  </body>
+</html>
