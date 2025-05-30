@@ -162,10 +162,10 @@
                     // แก้ไข: ย้ายการประกาศตัวแปร yyyy, mm, dd ให้อยู่ใน scope ที่ถูกต้อง
                     // เพื่อให้สามารถเข้าถึงได้เมื่อต้องการกำหนดค่าให้ input 'warrantyDate'
                     const today = new Date();
-                    const yyyy = today.getFullYear();
-                    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months start at 0!
+                    const yyyy = today.getFullYear(); // ต้องเป็น yyyy ไม่ใช่ ໒໐໒໔ หรือตัวอักษรอื่น
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
                     const dd = String(today.getDate()).padStart(2, '0');
-                    document.getElementById('warrantyDate').value = `${yyyy}-${mm}-${dd}`;
+                    document.getElementById('warrantyDate').value = `<span class="math-inline">\{yyyy\}\-</span>{mm}-${dd}`;
                 }
             } catch (err) {
                 console.error('LIFF initialization failed', err);
