@@ -92,27 +92,67 @@
 
       // ส่ง Flex Message
       try {
-        await liff.sendMessages([
+await liff.sendMessages([
+  {
+    type: "flex",
+    altText: "ลงทะเบียนสำเร็จ",
+    contents: {
+      type: "bubble",
+      size: "mega",
+      styles: {
+        body: {
+          backgroundColor: "#000000"  // พื้นหลังดำ
+        }
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        spacing: "md",
+        contents: [
           {
-            type: "flex",
-            altText: "ลงทะเบียนสำเร็จ",
-            contents: {
-              type: "bubble",
-              body: {
-                type: "box",
-                layout: "vertical",
-                contents: [
-                  { type: "text", text: "ลงทะเบียนสำเร็จ", weight: "bold", size: "lg", color: "#0015ff", align: "center" },
-                  { type: "separator", margin: "md" },
-                  { type: "text", text: `ชื่อ: ${name}`, margin: "sm", color: "#f50505" },
-                  { type: "text", text: `เบอร์: ${phone}`, margin: "sm", color: "#7a0124" },
-                  { type: "text", text: `ทะเบียน: ${plate}`, margin: "sm", color: "#7a0124" },
-                  { type: "text", text: `วันที่ลงทะเบียน: ${date}`, margin: "sm", color: "#7a0124" }
-                ]
+            type: "text",
+            text: "✅ ลงทะเบียนสำเร็จ",
+            weight: "bold",
+            size: "xl",
+            color: "#00FF00", // เขียว
+            align: "center"
+          },
+          {
+            type: "separator",
+            color: "#333333"
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            spacing: "sm",
+            contents: [
+              {
+                type: "text",
+                text: `ชื่อ: ${name}`,
+                color: "#FF6666" // แดง
+              },
+              {
+                type: "text",
+                text: `เบอร์: ${phone}`,
+                color: "#FFFFFF" // ขาว
+              },
+              {
+                type: "text",
+                text: `ทะเบียน: ${plate}`,
+                color: "#FFFFFF"
+              },
+              {
+                type: "text",
+                text: `วันที่ลงทะเบียน: ${date}`,
+                color: "#AAAAAA"
               }
-            }
+            ]
           }
-        ]);
+        ]
+      }
+    }
+  }
+]);
       } catch (err) {
         alert("⚠️ ไม่สามารถส่ง Flex Message ได้: " + err);
       }
