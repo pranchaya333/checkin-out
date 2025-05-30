@@ -2,26 +2,43 @@
 <html>
   <head>
     <title>ลงทะเบียนรีแมพ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       body {
         background-color: #000;
         color: gold;
         font-family: 'Arial', sans-serif;
         padding: 20px;
+        max-width: 480px;
+        margin: auto;
+      }
+      h2 {
+        text-align: center;
       }
       input, button {
-        padding: 10px;
-        margin: 10px 0;
+        display: block;
         width: 100%;
+        padding: 12px;
+        margin: 12px 0;
         background-color: #111;
         border: 1px solid gold;
         color: gold;
         border-radius: 8px;
+        font-size: 16px;
       }
       button {
         background-color: gold;
         color: black;
         font-weight: bold;
+      }
+      #message {
+        text-align: center;
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      #closeBtn {
+        display: none;
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -34,9 +51,12 @@
       <input type="hidden" id="date" />
       <button type="submit">บันทึกข้อมูล</button>
     </form>
+
     <p id="message"></p>
+    <button id="closeBtn" onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
+
     <script>
-      const liffId = '2007499630-0J5jPaaP';
+      const liffId = '2007499630-0J5jPaaP'; // 🔁 แก้ไขเป็น LIFF ID ของคุณ
       let userId = '';
 
       async function main() {
@@ -44,17 +64,21 @@
         if (!liff.isLoggedIn()) liff.login();
         const profile = await liff.getProfile();
         userId = profile.userId;
+
+        // ใส่วันที่อัตโนมัติ
         document.getElementById("date").value = new Date().toISOString().split("T")[0];
       }
 
       document.getElementById("registerForm").addEventListener("submit", async (e) => {
         e.preventDefault();
+
         const name = document.getElementById("name").value;
         const phone = document.getElementById("phone").value;
         const plate = document.getElementById("plate").value;
         const date = document.getElementById("date").value;
 
-        const response = await fetch(
+        // บันทึกข้อมูลไปยัง Google Apps Script
+        await fetch(
           'https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec',
           {
             method: 'POST',
@@ -64,28 +88,55 @@
           }
         );
 
-        document.getElementById("message").innerText = "✅ บันทึกข้อมูลเรียบร้อยแล้ว";
-        liff.sendMessages([
+        // ส่ง Flex Message ยืนยัน
+        await liff.sendMessages([
           {
             type: "flex",
             altText: "ลงทะเบียนสำเร็จ",
             contents: {
               type: "bubble",
+              size: "mega",
               body: {
                 type: "box",
                 layout: "vertical",
+                spacing: "md",
                 contents: [
-                  { type: "text", text: "ลงทะเบียนสำเร็จ", weight: "bold", size: "lg", color: "#FFD700" },
-                  { type: "text", text: `ชื่อ: ${name}`, color: "#FFF" },
-                  { type: "text", text: `เบอร์: ${phone}`, color: "#FFF" },
-                  { type: "text", text: `ทะเบียน: ${plate}`, color: "#FFF" },
-                  { type: "text", text: `วันที่: ${date}`, color: "#FFF" }
+                  {
+                    type: "text",
+                    text: "✅ ลงทะเบียนสำเร็จ",
+                    weight: "bold",
+                    size: "lg",
+                    color: "#FFD700"
+                  },
+                  {
+                    type: "text",
+                    text: `ชื่อ: ${name}`,
+                    color: "#FFFFFF"
+                  },
+                  {
+                    type: "text",
+                    text: `เบอร์: ${phone}`,
+                    color: "#FFFFFF"
+                  },
+                  {
+                    type: "text",
+                    text: `ทะเบียน: ${plate}`,
+                    color: "#FFFFFF"
+                  },
+                  {
+                    type: "text",
+                    text: `วันที่: ${date}`,
+                    color: "#FFFFFF"
+                  }
                 ]
               }
             }
           }
         ]);
-        liff.closeWindow();
+
+        // แสดงข้อความยืนยัน + ปุ่มปิด
+        document.getElementById("message").innerText = "✅ บันทึกข้อมูลเรียบร้อยแล้ว";
+        document.getElementById("closeBtn").style.display = "block";
       });
 
       main();
