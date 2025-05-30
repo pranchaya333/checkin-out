@@ -41,6 +41,19 @@
     .center {
       text-align: center;
     }
+    .loading {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .loading-icon {
+      font-size: 40px;
+      animation: spin 1.5s linear infinite;
+      color: gold;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     button {
       background-color: gold;
       color: black;
@@ -55,14 +68,21 @@
 <body>
   <h2>ข้อมูลรถของคุณ</h2>
   <div class="userid-text" id="lineUserDisplay">กำลังโหลด LINE User ID...</div>
-  <div id="carList"></div>
+
+  <div id="loading" class="loading">
+    <div class="loading-icon">🔄</div>
+    <p>กำลังค้นหาประวัติรถยนต์ของคุณ...</p>
+  </div>
+
+  <div id="carList" style="display: none;"></div>
+
   <div class="center">
     <button onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
   </div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const liffId = '2007499630-r04RVeeV'; // ใส่ LIFF ID ของโบ๊ทตรงนี้
+    const liffId = '2007499630-r04RVeeV'; // LIFF ID ของโบ๊ท
 
     async function main() {
       await liff.init({ liffId });
@@ -72,17 +92,18 @@
       const userId = profile.userId;
       document.getElementById("lineUserDisplay").innerText = `🆔 LINE User ID: ${userId}`;
 
-      // เรียกข้อมูลจาก Apps Script
       const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
       const cars = await res.json();
 
       const carList = document.getElementById("carList");
+      document.getElementById("loading").style.display = "none"; // ซ่อนข้อความรอ
+      carList.style.display = "block";
+
       if (cars.length === 0) {
-        carList.innerHTML = `<p class="center">🚗 ยังไม่มีข้อมูลการลงทะเบียน</p>`;
+        carList.innerHTML = `<p class="center">🚗 ไม่พบประวัติรถของคุณ</p>`;
         return;
       }
 
-      // แสดงข้อมูลแต่ละคัน
       cars.forEach((car, index) => {
         const div = document.createElement("div");
         div.className = "car";
