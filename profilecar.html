@@ -90,7 +90,8 @@
 
       const profile = await liff.getProfile();
       const userId = profile.userId;
-      document.getElementById("lineUserDisplay").innerText = `🆔 LINE User ID: ${userId}`;
+      document.getElementById("lineUserDisplay").innerText = `LINE User ID: ${userId}`;
+      document.getElementById("lineUserDisplay").style.color = "#000"; // สีพื้นหลังคือดำ
 
       const res = await fetch(`https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec?userId=${userId}`);
       const cars = await res.json();
