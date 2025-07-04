@@ -3,138 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>ลงทะเบียนรีแมพ</title>
+  <title>ลงทะเบียนรับประกันป้าย UV</title>
   <style>
-    body {
-      background-color: #000;
-      color: gold;
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    form {
-      max-width: 340px;
-      margin: auto;
-    }
-    input, button {
-      font-size: 16px;
-      padding: 8px 10px;
-      margin: 8px 0;
-      width: 100%;
-      background-color: #111;
-      border: 1px solid gold;
-      color: gold;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: gold;
-      color: black;
-      font-weight: bold;
-    }
+    body { background-color: #f0f2f5; color: #1c1e21; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 400px; margin: auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+    h2 { text-align: center; color: #333; }
+    h4 { margin-top: 20px; margin-bottom: 10px; color: #1c1e21; border-bottom: 1px solid #e0e0e0; padding-bottom: 5px; }
+    input, textarea, button { font-size: 16px; padding: 12px; margin: 8px 0; width: 100%; border: 1px solid #dddfe2; border-radius: 6px; box-sizing: border-box; }
+    textarea { resize: vertical; min-height: 80px; }
+    button { background-color: #1877f2; color: white; font-weight: bold; border: none; cursor: pointer; }
+    button:hover { background-color: #166fe5; }
     .hidden { display: none; }
-    .center { text-align: center; }
-    .userid-text {
-      font-size: 12px;
-      color: gray;
-      text-align: center;
-      margin-top: 10px;
+    .message { text-align: center; margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 6px; }
+    #loadingMessage { color: #1877f2; background-color: #e7f3ff; }
+    #successMessage { color: #31a24c; background-color: #eaf7ec; }
+    .file-upload-label { font-size: 12px; color: #606770; margin-top: 5px; display: block; }
+    #showUserId { font-size: 10px; color: grey; text-align: center; margin-top: 20px; }
+    .terms-box {
+      background-color: #f7f7f7;
+      border: 1px solid #ddd;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-radius: 6px;
+      color: #333;
+      font-size: 14px;
+      text-align: left;
     }
-    #loadingMessage {
-      color: lightgreen;
-      text-align: center;
-      margin-top: 15px;
-      font-weight: bold;
-    }
+    .terms-box ul { padding-left: 20px; }
+    .terms-box li { margin-bottom: 8px; }
   </style>
 </head>
 <body>
-  <h2 class="center">ลงทะเบียนรับประกัน</h2>
+  <div id="termsContainer" class="container">
+    <h2>เงื่อนไขการรับประกัน</h2>
+    <div class="terms-box">
+        <p><strong>เรียน ลูกค้าผู้มีอุปการคุณ,</strong></p>
+        <p>เพื่อเป็นการยืนยันคุณภาพและสร้างความมั่นใจในสินค้าและบริการของเรา บริษัทฯ ขอมอบการรับประกันคุณภาพสีสำหรับงานป้ายพิมพ์ UV เป็นระยะเวลา 1 ปีเต็ม นับจากวันที่ติดตั้ง โดยมีรายละเอียดและเงื่อนไขดังต่อไปนี้</p>
+        
+        <h4>มาตรา 1: ขอบเขตการรับประกัน (สิ่งที่คุ้มครอง)</h4>
+        <ul>
+            <li>บริษัทฯ รับประกันการซีดจางของสี (Color Fading) ที่เกิดจากกระบวนการผลิตและคุณภาพของหมึกพิมพ์ UV ของทางบริษัทฯ เท่านั้น</li>
+            <li>การรับประกันนี้ครอบคลุมเฉพาะการเปลี่ยนแปลงของเม็ดสีที่ซีดจางลงอย่างมีนัยสำคัญเมื่อเทียบกับสภาพแรกติดตั้ง ภายใต้การใช้งานในสภาวะปกติ</li>
+            <li><strong>การดำเนินการเมื่อเข้าเงื่อนไข:</strong> บริษัทฯ จะดำเนินการผลิตชิ้นงานใหม่ให้ เฉพาะส่วนที่เกิดปัญหา โดยใช้ไฟล์งานเดิม และไม่รวมถึงค่าใช้จ่ายในการรื้อถอน, การขนส่ง และการติดตั้งใหม่</li>
+        </ul>
 
-  <form id="registerForm">
-    <input type="text" id="name" placeholder="ชื่อ-สกุล" autocomplete="name" required />
-    <input type="tel" id="phone" placeholder="เบอร์โทร" autocomplete="tel" required />
-    <input type="text" id="plate" placeholder="เลขทะเบียนรถ" autocomplete="off" required />
-    <input type="hidden" id="date" />
-    <input type="hidden" id="userId" />
-    <button type="submit">บันทึกข้อมูล</button>
-  </form>
+        <h4>มาตรา 2: ข้อยกเว้นสำคัญ (สิ่งที่ไม่คุ้มครอง)</h4>
+        <p>การรับประกันนี้ <strong>ไม่ครอบคลุม</strong> ความเสียหายในกรณีดังต่อไปนี้:</p>
+        <strong>2.1 ความเสียหายทางกายภาพ (Physical Damage):</strong>
+        <ul>
+            <li>รอยขีดข่วน, รอยถลอก, การเสียดสี, การกระแทก, การบิดงอ, การฉีกขาด หรือการแตกหักของวัสดุ</li>
+            <li>สีที่หลุดร่อนจากการสัมผัส, การแกะ, การลอก หรือการติดตั้งวัตถุอื่นทับบนชิ้นงาน</li>
+        </ul>
+        <strong>2.2 ความเสียหายจากสภาพแวดล้อมและการใช้งานผิดประเภท:</strong>
+        <ul>
+            <li>การติดตั้งในพื้นที่ที่สัมผัสกับความร้อนสูง, เปลวไฟ, หรือไอน้ำ/ไอสารเคมีเข้มข้นตลอดเวลา</li>
+            <li>การสัมผัสกับสารเคมีทุกชนิด เช่น ทินเนอร์, แอลกอฮอล์, น้ำมัน, กรด-ด่าง หรือน้ำยาทำความสะอาดที่มีฤทธิ์กัดกร่อน</li>
+            <li>การทำความสะอาดผิดวิธี เช่น การใช้แปรงขนแข็ง, สก๊อตไบร์ท, หรือวัสดุมีคมในการขัดถู</li>
+        </ul>
+        <strong>2.3 ความเสื่อมสภาพตามธรรมชาติและเหตุสุดวิสัย:</strong>
+        <ul>
+            <li>การเปลี่ยนแปลงของเฉดสีเพียงเล็กน้อย ซึ่งไม่สามารถสังเกตเห็นได้ชัดเจนในระยะปกติ</li>
+            <li>ความเสียหายจากภัยธรรมชาติ เช่น อุทกภัย, วาตภัย, อัคคีภัย, แผ่นดินไหว รวมถึงความเสียหายจากสัตว์หรือแมลง</li>
+        </ul>
+        <strong>2.4 การดัดแปลงและติดตั้ง:</strong>
+        <ul>
+            <li>ความเสียหายที่เกิดจากการดัดแปลง, แก้ไข, หรือซ่อมแซมชิ้นงานโดยบุคคลภายนอกที่ไม่ใช่ทีมงานของบริษัทฯ</li>
+            <li>ความเสียหายที่เกิดจากการรื้อถอนและนำไปติดตั้งใหม่ด้วยตนเอง</li>
+        </ul>
 
-  <div id="loadingMessage" class="hidden">⏳ กรุณารอสักครู่ กำลังบันทึกข้อมูล...</div>
-
-  <div id="successMessage" class="hidden center">
-    <p>✅ บันทึกข้อมูลเรียบร้อยแล้ว</p>
-    <button onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
+        <h4>มาตรา 3: กระบวนการและเงื่อนไขการรับสิทธิ์</h4>
+        <strong>3.1 การลงทะเบียน:</strong>
+        <p>ลูกค้า <strong>ต้อง</strong> ดำเนินการลงทะเบียนเพื่อรับสิทธิ์ผ่าน LINE Official Account ของบริษัทฯ ภายใน 15 วัน นับจากวันที่ติดตั้งสินค้า โดยต้องกรอกข้อมูลให้ครบถ้วนและแนบภาพถ่ายชิ้นงานหลังการติดตั้งเป็นหลักฐาน หากไม่ลงทะเบียนภายในเวลาที่กำหนด จะถือว่าท่านสละสิทธิ์การรับประกันโดยสมบูรณ์</p>
+        <strong>3.2 การแจ้งเคลม:</strong>
+        <ul>
+            <li>ติดต่อผ่าน LINE Official Account พร้อมแจ้งชื่อและเบอร์โทร</li>
+            <li>ส่งภาพถ่าย 2 ภาพ:
+                <ul>
+                    <li>ภาพถ่ายระยะไกลที่เห็นภาพรวมของป้ายในบริเวณที่ติดตั้ง</li>
+                    <li>ภาพถ่ายระยะใกล้ (Close-up) บริเวณที่เกิดปัญหาสีซีดจาง</li>
+                </ul>
+            </li>
+            <li>บริษัทฯ จะใช้เวลาประเมินเบื้องต้นจากภาพถ่ายภายใน 3-5 วันทำการ และในบางกรณี อาจร้องขอการตรวจสอบชิ้นงานจริง ณ สถานที่ติดตั้ง</li>
+        </ul>
+        <strong>3.3 การตัดสิน:</strong>
+        <p>การพิจารณาและตัดสินของบริษัทฯ ถือเป็นที่สิ้นสุด</p>
+        <hr>
+        <h4>คำแนะนำในการดูแลรักษา:</h4>
+        <p>เพื่อรักษาสภาพสีให้สวยงามยาวนาน ควรใช้ผ้าไมโครไฟเบอร์ชุบน้ำสะอาดบิดหมาดเช็ดทำความสะอาดเท่านั้น และหลีกเลี่ยงการใช้น้ำยาหรือสารเคมีทุกชนิด</p>
+    </div>
+    <button id="acceptButton">ยอมรับเงื่อนไขและดำเนินการต่อ</button>
   </div>
 
-  <div class="userid-text" id="showUserId">กำลังโหลด LINE User ID...</div>
+  <div id="registerContainer" class="container hidden">
+    <h2>ลงทะเบียนรับประกัน</h2>
+    <form id="registerForm">
+      <input type="text" id="name" placeholder="ชื่อ-สกุล" autocomplete="name" required />
+      <input type="tel" id="phone" placeholder="เบอร์โทรศัพท์" autocomplete="tel" required />
+      <textarea id="address" placeholder="ที่อยู่" required></textarea>
+      
+      <label for="imageUpload">รูปภาพติดตั้ง</label>
+      <input type="file" id="imageUpload" accept="image/*" required />
+      <span class="file-upload-label">ให้อัปโหลดภาพถ่ายมุมกว้างหลังจากติดตั้งเสร็จ</span>
+
+      <input type="hidden" id="date" />
+      <input type="hidden" id="userId" />
+      <button type="submit">บันทึกข้อมูล</button>
+    </form>
+
+    <div id="loadingMessage" class="message hidden">⏳ กำลังบันทึกข้อมูล กรุณารอสักครู่...</div>
+    <div id="successMessage" class="hidden">
+      <p>✅ บันทึกข้อมูลเรียบร้อยแล้ว</p>
+      <button onclick="liff.closeWindow()">ปิดหน้าต่างนี้</button>
+    </div>
+  </div>
+
+  <div id="showUserId"></div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const liffId = '2007499630-0J5jPaaP'; // ใส่ LIFF ID ของคุณ
+    // ------------------ CONFIG: แก้ไขข้อมูลของคุณตรงนี้ ------------------
+    const LIFF_ID = '2007688681-qlaMX5a8'; // <-- ใส่ LIFF ID ของคุณที่นี่
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDOOdBxdkyF29TxZ_7SfOGxuoOyqmKXYdnX7cuPkRbCnWeiE3gHh3JK4cz8RkgZpqmOw/exec'; // <-- ใส่ URL ของ Apps Script ที่นี่
+    // ----------------------------------------------------------------
+
+    const termsContainer = document.getElementById('termsContainer');
+    const registerContainer = document.getElementById('registerContainer');
+    const acceptButton = document.getElementById('acceptButton');
+    const registerForm = document.getElementById('registerForm');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const successMessage = document.getElementById('successMessage');
     let userId = '';
 
-    async function main() {
-      await liff.init({ liffId });
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
 
-      if (!liff.isLoggedIn()) {
-        liff.login();
-        return;
+    async function initializeLiff() {
+      try {
+        termsContainer.classList.add('hidden');
+        loadingMessage.classList.remove('hidden');
+        loadingMessage.innerText = '🔄 กำลังเชื่อมต่อกับ LINE...';
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+        const profile = await liff.getProfile();
+        userId = profile.userId;
+        document.getElementById("userId").value = userId;
+        document.getElementById("date").value = new Date().toISOString().split("T")[0];
+        document.getElementById("showUserId").innerText = "LINE User ID: " + userId;
+        loadingMessage.classList.add('hidden');
+        registerContainer.classList.remove('hidden');
+      } catch (error) {
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับ LINE: ' + error);
+        termsContainer.classList.remove('hidden');
+        loadingMessage.classList.add('hidden');
       }
-
-      const profile = await liff.getProfile();
-      userId = profile.userId;
-      document.getElementById("userId").value = userId;
-      document.getElementById("date").value = new Date().toISOString().split("T")[0];
-      document.getElementById("showUserId").innerText = "LINE User ID: " + userId;
-      document.getElementById("showUserId").style.color = "#000";
     }
 
-    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    acceptButton.addEventListener('click', initializeLiff);
+
+    registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      // แสดงข้อความกำลังบันทึก
-      document.getElementById("loadingMessage").classList.remove("hidden");
-
+      document.getElementById("registerForm").classList.add("hidden");
+      loadingMessage.innerText = '⏳ กำลังบันทึกข้อมูล กรุณารอสักครู่...';
+      loadingMessage.classList.remove("hidden");
+      const fileInput = document.getElementById('imageUpload');
+      if (fileInput.files.length === 0) {
+        alert('กรุณาเลือกไฟล์รูปภาพ');
+        document.getElementById("registerForm").classList.remove("hidden");
+        loadingMessage.classList.add("hidden");
+        return;
+      }
+      const file = fileInput.files[0];
+      const base64File = await toBase64(file);
       const name = document.getElementById("name").value;
       const phone = document.getElementById("phone").value;
-      const plate = document.getElementById("plate").value;
       const date = document.getElementById("date").value;
-
-      // ส่งข้อมูลไป Google Apps Script
-      await fetch("https://script.google.com/macros/s/AKfycbz2Kz_HPUAAu2KWUxxwBfrGVNXA6E9ecj2xb7iR-1Oz0DDUVD7MYhxM4rpf0_m1qbnCOw/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, name, phone, plate, date })
-      });
-
-      // ส่ง Flex Message
+      const payload = {
+        userId: userId,
+        name: name,
+        phone: phone,
+        address: document.getElementById("address").value,
+        date: date,
+        fileData: base64File,
+        fileName: file.name,
+        fileType: file.type
+      };
       try {
+        const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } });
+        const result = await response.json();
+        if (result.status !== 'success') throw new Error('Server error: ' + result.message);
+        const registrationDate = new Date(date);
+        const expiryDate = new Date(registrationDate.setFullYear(registrationDate.getFullYear() + 1));
+        const formattedExpiryDate = expiryDate.toISOString().split('T')[0];
         await liff.sendMessages([
           {
             type: "flex",
-            altText: "ลงทะเบียนสำเร็จ",
+            altText: "ลงทะเบียนรับประกันเรียบร้อยแล้ว",
             contents: {
               type: "bubble",
-              size: "mega",
-              styles: { body: { backgroundColor: "#000000" } },
+              header: {
+                type: "box",
+                layout: "vertical",
+                backgroundColor: "#1877f2",
+                contents: [{ type: "text", text: "ลงทะเบียนสำเร็จ", weight: "bold", size: "xl", color: "#FFFFFF" }]
+              },
               body: {
                 type: "box",
                 layout: "vertical",
                 spacing: "md",
                 contents: [
-                  { type: "text", text: "✅ ลงทะเบียนสำเร็จ", weight: "bold", size: "xl", color: "#00FF00", align: "center" },
-                  { type: "separator", color: "#333333" },
-                  {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "sm",
+                  { type: "text", text: "ข้อมูลการรับประกัน", weight: "bold", size: "lg" },
+                  { type: "separator" },
+                  { type: "box", layout: "vertical", margin: "lg", spacing: "sm",
                     contents: [
-                      { type: "text", text: `ชื่อ: ${name}`, color: "#FF6666" },
-                      { type: "text", text: `เบอร์: ${phone}`, color: "#FFFFFF" },
-                      { type: "text", text: `ทะเบียน: ${plate}`, color: "#FFFFFF" },
-                      { type: "text", text: `วันที่ลงทะเบียน: ${date}`, color: "#AAAAAA" }
+                      { type: "box", layout: "baseline", spacing: "sm", contents: [{ type: "text", text: "ชื่อ:", color: "#aaaaaa", size: "sm", flex: 2 }, { type: "text", text: name, wrap: true, color: "#666666", size: "sm", flex: 5 }] },
+                      { type: "box", layout: "baseline", spacing: "sm", contents: [{ type: "text", text: "เบอร์โทร:", color: "#aaaaaa", size: "sm", flex: 2 }, { type: "text", text: phone, wrap: true, color: "#666666", size: "sm", flex: 5 }] },
+                      { type: "separator", margin: "lg" },
+                      { type: "box", layout: "baseline", spacing: "sm", margin: "md", contents: [{ type: "text", text: "ลงทะเบียน:", color: "#aaaaaa", size: "sm", flex: 2 }, { type: "text", text: date, wrap: true, color: "#666666", size: "sm", flex: 5 }] },
+                      { type: "box", layout: "baseline", spacing: "sm", contents: [{ type: "text", text: "หมดอายุ:", color: "#aaaaaa", size: "sm", flex: 2 }, { type: "text", text: formattedExpiryDate, wrap: true, color: "#666666", size: "sm", flex: 5 }] }
                     ]
                   }
                 ]
@@ -142,17 +236,14 @@
             }
           }
         ]);
+        loadingMessage.classList.add("hidden");
+        successMessage.classList.remove("hidden");
       } catch (err) {
-        alert("⚠️ ไม่สามารถส่ง Flex Message ได้: " + err);
+        alert("เกิดข้อผิดพลาดในการบันทึก: " + err);
+        document.getElementById("registerForm").classList.remove("hidden");
+        loadingMessage.classList.add("hidden");
       }
-
-      // ซ่อนฟอร์ม + ข้อความโหลด แล้วแสดงข้อความสำเร็จ
-      document.getElementById("registerForm").classList.add("hidden");
-      document.getElementById("loadingMessage").classList.add("hidden");
-      document.getElementById("successMessage").classList.remove("hidden");
     });
-
-    main();
   </script>
 </body>
 </html>
