@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>บันทึกการเข้าออกงาน · Minimal</title>
 
-    <!-- Tailwind / SweetAlert / LIFF -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -29,19 +28,28 @@
       /* Gentle blink for the location confirm button */
       @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.55} }
       .blink { animation: blink 1s infinite; }
+
+      /* ===== 📸 โค้ดที่เพิ่มเข้ามาใหม่ ===== */
+      /* 1. พลิกวิดีโอตัวอย่างให้เหมือนกระจก */
+      #camera-preview {
+        transform: scaleX(-1);
+      }
+      /* 2. เพิ่มฟิลเตอร์ "สวย" ให้กับรูปที่ถ่ายแล้ว */
+      #preview {
+        filter: brightness(1.05) contrast(1.1) saturate(1.1);
+      }
+      /* ===== จบส่วนที่เพิ่มเข้ามาใหม่ ===== */
     </style>
   </head>
 
   <body class="h-full bg-neutral-100 text-neutral-900 antialiased">
     <main class="min-h-screen flex items-center justify-center p-4">
       <div class="relative max-w-md w-full bg-white border border-neutral-200 rounded-2xl shadow-sm hover-ring">
-        <!-- Header / Greeting -->
         <header class="p-6 border-b border-neutral-200">
           <p class="text-sm text-neutral-500">👋🏻 สวัสดีครับคุณ</p>
           <input id="displayName" name="displayName" type="text" class="mt-2 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black" placeholder="ชื่อที่แสดง (อัปเดตอัตโนมัติจาก LINE)" />
         </header>
 
-        <!-- Time / Date bar -->
         <section class="px-6 pt-6">
           <div class="rounded-xl bg-black text-white p-5">
             <div id="date" class="text-xs tracking-wide opacity-80"></div>
@@ -51,9 +59,7 @@
           </div>
         </section>
 
-        <!-- FORM -->
         <form id="data-form" class="p-6" onsubmit="return false;">
-          <!-- Step 1: Basic info -->
           <section id="step1">
             <div class="relative bg-neutral-50 p-4 rounded-xl border border-neutral-200">
               <div id="loadingOverlay" class="flex items-center justify-center">
@@ -66,14 +72,12 @@
                 <input id="columnDData" name="columnDData" type="text" required placeholder="ตำแหน่ง" class="input-field w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black" />
                 <input id="userId" name="userId" type="hidden" />
                 <input id="columnAData" name="columnAData" type="hidden" />
-                <!-- Hidden fields referenced in your original JS to prevent errors -->
                 <input id="columnEData" name="columnEData" type="hidden" />
                 <input id="columnFData" name="columnFData" type="hidden" />
                 <input id="columnQData" name="columnQData" type="hidden" />
               </div>
             </div>
 
-            <!-- Segmented job switch -->
             <div class="mt-6">
               <div class="grid grid-cols-3 gap-2" role="group" aria-label="เลือกประเภทงาน">
                 <div>
@@ -102,7 +106,6 @@
             </div>
           </section>
 
-          <!-- Step 2: Photo -->
           <section id="step2" class="hidden">
             <div class="mt-2">
               <video id="camera-preview" class="w-full rounded-xl border border-neutral-200" autoplay playsinline poster="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png"></video>
@@ -120,7 +123,6 @@
             </div>
           </section>
 
-          <!-- Step 3: Location & submit -->
           <section id="step3" class="hidden">
             <div class="mt-2 rounded-xl border border-neutral-200 overflow-hidden">
               <button type="button" onclick="getLocation()" class="w-full bg-black text-white px-4 py-3 text-sm font-semibold tracking-wide blink">กดเพื่อยืนยันที่อยู่ของคุณ</button>
@@ -215,7 +217,8 @@
 
         startBtn.addEventListener('click', async () => {
           try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            // ใช้ facingMode: "user" เพื่อบังคับใช้กล้องหน้า
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
             video.srcObject = stream; captureBtn.disabled = false; video.style.display = 'block';
           } catch (err) { console.error('Error accessing the camera:', err); }
         });
@@ -224,6 +227,13 @@
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+
+          // ===== 📸 โค้ดที่แก้ไข =====
+          // พลิกภาพในแนวนอน (un-mirror) เพื่อให้ตรงกับ preview
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+          // ===== จบส่วนที่แก้ไข =====
+          
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           previewImage.src = canvas.toDataURL('image/png');
           video.style.display = 'none';
