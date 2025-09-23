@@ -1,293 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียน</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📢 ประกาศแจ้งพนักงาน — ป้ายซิ่ง</title>
+  <meta name="description" content="ประกาศแจ้งพนักงาน บริษัท แบรนด์ อินโนเวชั่น จำกัด (ป้ายซิ่ง) เปลี่ยนวันหยุดประจำสัปดาห์: 26 ก.ย. 2568 หยุด, 28 ก.ย. 2568 ทำงานปกติ" />
+  <meta property="og:title" content="📢 ประกาศแจ้งพนักงาน — ป้ายซิ่ง" />
+  <meta property="og:description" content="26 ก.ย. 2568: หยุดทำการ • 28 ก.ย. 2568: ทำงานปกติ" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#111827" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      background: #0b1020; color: #e5e7eb; font-family: "Sarabun", sans-serif; line-height: 1.6;
+    }
+    .card {
+      max-width: 720px; background: #111827cc; border-radius: 18px; padding: 28px 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35); backdrop-filter: blur(10px);
+    }
+    h1 { font-size: 24px; font-weight: 700; color: #f9fafb; margin: 0 0 16px; }
+    .desc { margin: 12px 0; }
+    .list { list-style: none; padding: 0; margin: 12px 0 20px; }
+    .list li { margin: 8px 0; padding: 10px 12px; background: rgba(255,255,255,.05); border-radius: 12px; }
+    .btn {
+      display: inline-block; width: 100%; padding: 14px 20px; font-size: 16px; font-weight: 700;
+      background: linear-gradient(135deg, #34d399, #10b981); border: none; border-radius: 14px;
+      color: #00110a; cursor: pointer; text-align: center;
+    }
+    .btn:hover { background: linear-gradient(135deg, #6ee7b7, #34d399); }
+    .hint { font-size: 13px; color: #9ca3af; margin-top: 12px; }
+  </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
-<div class="max-w-md m-auto p-2">
-    <!-- ส่วนหัว: ข้อความพร้อมกรอบข้อความ -->
-    <div class="bg-white rounded-lg p-6 mb-4 text-center border-2 border-blue-500 shadow-lg">
-        <h1 class="text-3xl font-bold text-blue-700 mb-2">ลงทะเบียนชิงโชค</h1>
-        <h2 class="text-xl text-gray-700">บัตรการกุศล</h2>
-        <h3 class="text-lg text-gray-600">วัดพุทธบูชา ป่าโคกปราสาท</h3>
-    </div>
-
-    <!-- ฟอร์มลงทะเบียน -->
-    <form>
-        <div class="bg-white rounded-lg p-10">    
-            <div class="flex flex-col">
-                <!-- ฟิลด์ Line ID ที่ซ่อนไว้ -->
-                <input type="hidden" id="userlineId" name="userlineId">
-                <div class="mb-4">
-                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="nameId" placeholder="ชื่อ-สกุล" name="nameId" required>
-                </div>
-                <div class="mb-4">
-                    <input type="tel" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="phoneId" placeholder="เบอร์โทรศัพท์" name="phoneId" required>
-                </div>
-                <div class="mb-6">
-                    <input type="text" class="input-field w-full border border-slate-300 p-2 text-md rounded-lg" id="charityId" placeholder="เลขบัตรการกุศล" name="charityId" required>
-                </div>
-            </div>
-            <button type="button" id="submitBtn" class="bg-slate-800 text-center w-full text-white py-4 px-4 rounded-lg hover:bg-blue-700">บันทึกข้อมูล</button>
-        </div>
-    </form>
-</div>
-<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-<script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbznMSL7xZALurNHRF_CRJC1tj9ITponXX2dk32Jx8W32MbYZaY_ETjsmYqqnluDGV8Cog/exec'; 
-    const LIFF_ID = '2007130748-nDd0b9al';
-
-    window.onload = function () {
-        initializeLiff();
-    };
-
-    async function initializeLiff() {
-        await liff.init({ liffId: `${LIFF_ID}` });
-
-        if (liff.isLoggedIn()) {
-            getUserProfile();
-        } else {
-            liff.login();
-        }
-    }
-
-    async function getUserProfile() {
-        try {
-            const profile = await liff.getProfile();
-            document.getElementById('userlineId').value = profile.userId;
-        } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลโปรไฟล์:', error);
-        }
-    }
-
-    async function sendFlexMessage() {
-        const flexMessage = {
-            type: 'flex',
-            altText: 'ลงทะเบียนเรียบร้อย',
-            contents: {
-                type: 'bubble',
-                styles: {
-                    header: { backgroundColor: '#f0f0f0' },
-                    footer: { backgroundColor: '#f0f0f0' },
-                    body: { backgroundColor: '#ffffff' }
-                },
-                header: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: 'ข้อมูลลงทะเบียนสำเร็จ',
-                            weight: 'bold',
-                            size: 'lg',
-                            color: '#000000',
-                            align: 'center'
-                        }
-                    ]
-                },
-                body: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'box',
-                            layout: 'vertical',
-                            margin: 'lg',
-                            spacing: 'sm',
-                            contents: [
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'ชื่อ-สกุล',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('nameId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'เบอร์โทรศัพท์',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('phoneId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                },
-                                {
-                                    type: 'box',
-                                    layout: 'horizontal',
-                                    contents: [
-                                        {
-                                            type: 'text',
-                                            text: 'เลขบัตรการกุศล',
-                                            size: 'sm',
-                                            color: '#555555',
-                                            flex: 1
-                                        },
-                                        {
-                                            type: 'text',
-                                            text: document.getElementById('charityId').value,
-                                            size: 'sm',
-                                            color: '#111111',
-                                            align: 'end',
-                                            flex: 2
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                footer: {
-                    type: 'box',
-                    layout: 'vertical',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: 'ยินดีต้อนรับ!',
-                            size: 'sm',
-                            color: '#aaaaaa',
-                            align: 'center'
-                        }
-                    ]
-                }
-            }
-        };
-
-        await liff.sendMessages([flexMessage]);
-    }
-
-    let url = `${WEB_APP_URL}`;
-    let userlineIdInput = document.getElementById("userlineId");
-    let nameIdInput = document.getElementById("nameId");
-    let phoneIdInput = document.getElementById("phoneId");
-    let charityIdInput = document.getElementById("charityId");
-    let submitBtn = document.getElementById("submitBtn");
-
-    function validateForm() {
-        const nameId = nameIdInput.value.trim();
-        const phoneId = phoneIdInput.value.trim();
-        const charityId = charityIdInput.value.trim();
-
-        if (nameId === '' || phoneId === '' || charityId === '') {
-            return false;
-        }
-
-        return true;
-    }
-
-    submitBtn.addEventListener('click', async (event) => {
-        event.preventDefault();
-
-        if (!validateForm()) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'กรุณากรอกข้อมูลในช่องที่จำเป็น.',
-            });
-            return;
-        }
-
-        const isConfirmed = await showConfirmationDialog();
-
-        if (isConfirmed) {
-            submitBtn.disabled = true;
-
-            try {
-                let obj = {
-                    userlineId: userlineIdInput.value,
-                    nameId: nameIdInput.value,
-                    phoneId: phoneIdInput.value,
-                    charityId: charityIdInput.value
-                };
-
-                Swal.fire({
-                    title: '<div class="text-md">กำลังบันทึก, รอสักครู่...</div>',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    html: '<div class="swal2-loading"></div>',
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                let response = await fetch(url, {
-                    method: "POST",
-                    body: JSON.stringify(obj)
-                });
-
-                let data = await response.text();
-
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'บันทึกข้อมูลของคุณเรียบร้อย!',
-                    icon: 'success',
-                    confirmButtonText: 'ปิด',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        liff.closeWindow();
-                    }
-                });
-                sendFlexMessage();
-                console.log(data);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'เกิดข้อผิดพลาดขณะส่งข้อมูล.',
-                });
-
-                console.error(error);
-            } finally {
-                submitBtn.disabled = false;
-            }
-        } else {
-            Swal.fire('Submission Canceled', 'ข้อมูลของคุณไม่ได้ถูกส่ง.', 'info');
-        }
-    });
-
-    async function showConfirmationDialog() {
-        const confirmation = await Swal.fire({
-            title: 'ยืนยันการส่งข้อมูล',
-            text: 'แน่ใจ ว่าคุณกำลังส่งข้อมูล?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'ใช่, ส่งข้อมูล!',
-            cancelButtonText: 'ไม่, ยกเลิก'
-        });
-
-        return confirmation.isConfirmed;
-    }
-</script>
+<body>
+  <main class="card">
+    <h1>📢 ประกาศแจ้งพนักงาน บริษัท แบรนด์ อินโนเวชั่น จำกัด (ป้ายซิ่ง)</h1>
+    <p class="desc">เพื่อความสะดวกในการจัดการงานภายในบริษัท ทางบริษัทขอประกาศ <strong>เปลี่ยนวันหยุดประจำสัปดาห์</strong> ดังนี้</p>
+    <ul class="list">
+      <li>🗓️ วันศุกร์ที่ 26 กันยายน 2568 → <strong>หยุดทำการ 1 วัน</strong></li>
+      <li>🗓️ วันอาทิตย์ที่ 28 กันยายน 2568 → <strong>ทำงานตามปกติ</strong></li>
+    </ul>
+    <p>ขอให้พนักงานทุกท่านรับทราบและวางแผนงานให้เรียบร้อย<br/>ขอบคุณทุกท่านที่ให้ความร่วมมือ 🙏</p>
+    <a class="btn" href="https://liff.line.me/2006738214-Q2Yrq7M7">✅ รับทราบ และเข้าสู่หน้าบันทึกงาน</a>
+    <p class="hint">หากปุ่มไม่ทำงาน ให้คัดลอกลิงก์นี้ไปเปิดใน LINE: https://liff.line.me/2006738214-Q2Yrq7M7</p>
+  </main>
 </body>
 </html>
